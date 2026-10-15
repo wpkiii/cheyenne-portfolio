@@ -1,26 +1,77 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design tokens — the single source of truth for color and type.
+ * Monochrome palette modeled on the reference site; swap values here to rebrand.
+ */
+@theme {
+  --color-paper: #ffffff;
+  --color-ink: #000000;
+  --color-grey-1: #212121;
+  --color-grey-2: #404040;
+  --color-grey-3: #808080;
+  --color-grey-4: #b0b0b0;
+  --color-mist: #f2f2f2;
+  --color-accent: #ed1c24;
+
+  /* Inter stands in for Helvetica Neue (display + labels); Montserrat for body. */
+  --font-display: var(--font-inter), "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-montserrat), "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Scroll-entrance animation used by <Reveal>. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 900ms var(--ease-out-soft),
+    transform 900ms var(--ease-out-soft);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Blur-to-sharp image load used by <SmartImage>. */
+.blur-load {
+  filter: blur(16px);
+  transform: scale(1.03);
+  transition:
+    filter 700ms var(--ease-out-soft),
+    transform 700ms var(--ease-out-soft);
+}
+.blur-load[data-loaded="true"] {
+  filter: none;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal,
+  .blur-load {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
 }
