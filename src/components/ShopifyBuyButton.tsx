@@ -38,20 +38,18 @@ function loadSdk() {
   return sdkPromise;
 }
 
-// Match the site's monochrome look inside Shopify's iframe.
-const font = { "font-family": "Helvetica Neue, Helvetica, Arial, sans-serif" };
-const blackButton = {
+// Match the site's look inside Shopify's iframe: white bold Helvetica on black, pill buttons.
+const font = { "font-family": "Helvetica Neue, Helvetica, Arial, sans-serif", "font-weight": "700" };
+const pillButton = {
   ...font,
-  "font-size": "12px",
-  "font-weight": "700",
-  "letter-spacing": "0.25em",
-  "text-transform": "uppercase",
-  "padding-top": "18px",
-  "padding-bottom": "18px",
-  "border-radius": "0px",
-  "background-color": "#000000",
-  ":hover": { "background-color": "#404040" },
-  ":focus": { "background-color": "#404040" },
+  "font-size": "15px",
+  "border-radius": "999px",
+  "padding-left": "28px",
+  "padding-right": "28px",
+  "background-color": "#ffffff",
+  color: "#000000",
+  ":hover": { "background-color": "#9a9a9a", color: "#000000" },
+  ":focus": { "background-color": "#9a9a9a", color: "#000000" },
 };
 
 const { domain, storefrontAccessToken, productId, fallback } = site.shopify;
@@ -86,18 +84,24 @@ export default function ShopifyBuyButton() {
               text: { button: "Add to cart" },
               styles: {
                 product: { "text-align": "left", "@media (min-width: 601px)": { "max-width": "100%" } },
-                title: { ...font, "font-size": "32px", "font-weight": "200", "text-transform": "uppercase" },
-                price: { ...font, "font-size": "18px" },
-                compareAt: { ...font },
-                description: { "font-family": "Montserrat, Helvetica, Arial, sans-serif", color: "#404040" },
-                button: blackButton,
+                title: { ...font, "font-size": "40px", "letter-spacing": "-0.03em", color: "#ffffff" },
+                price: { ...font, "font-size": "20px", color: "#ffffff" },
+                compareAt: { ...font, color: "#9a9a9a" },
+                description: { ...font, "font-size": "18px", color: "#ffffff" },
+                button: pillButton,
               },
             },
             cart: {
               text: { title: "Cart", button: "Checkout" },
-              styles: { button: blackButton, title: { ...font, "text-transform": "uppercase" } },
+              styles: { button: pillButton, title: font },
             },
-            toggle: { styles: { toggle: { "background-color": "#000000", ":hover": { "background-color": "#404040" } } } },
+            toggle: {
+              styles: {
+                toggle: { ...font, "background-color": "#ffffff", color: "#000000", ":hover": { "background-color": "#9a9a9a" } },
+                count: { color: "#000000" },
+                iconPath: { fill: "#000000" },
+              },
+            },
           },
         });
       })
@@ -117,12 +121,14 @@ export default function ShopifyBuyButton() {
         <Placeholder label="Product image coming soon" />
       </div>
       <div className="md:pt-8">
-        <h2 className="font-display text-4xl font-extralight uppercase tracking-tight">
-          {fallback.title}
-        </h2>
-        <p className="mt-4 font-display text-lg">{fallback.price}</p>
-        <p className="mt-6 max-w-md leading-relaxed text-grey-2">{fallback.description}</p>
-        <button type="button" disabled className={`${buttonClass} mt-10 cursor-not-allowed opacity-50 hover:bg-transparent hover:text-ink`}>
+        <h2 className="text-4xl font-bold tracking-[-0.03em] md:text-5xl">{fallback.title}</h2>
+        <p className="mt-4 text-xl font-bold">{fallback.price}</p>
+        <p className="mt-6 max-w-md text-lg font-bold leading-snug">{fallback.description}</p>
+        <button
+          type="button"
+          disabled
+          className={`${buttonClass("solid")} mt-10 cursor-not-allowed opacity-50 hover:bg-white hover:text-black`}
+        >
           {failed ? "Store unavailable" : "Coming soon"}
         </button>
       </div>

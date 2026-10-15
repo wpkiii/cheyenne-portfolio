@@ -13,7 +13,10 @@ export const site = {
   instagramHandle: "@handle",
 
   hero: {
-    // Drop a file at public/images/hero.jpg and set this to "/images/hero.jpg".
+    // Center media. A video (muted, looping) wins over the image; the image is
+    // also used as the video's poster frame. Files go in public/, e.g.
+    // video: "/videos/hero.mp4", image: "/images/hero.jpg".
+    video: null as string | null,
     image: null as string | null,
   },
 

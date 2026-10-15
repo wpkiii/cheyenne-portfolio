@@ -7,14 +7,12 @@ export const metadata: Metadata = { title: "Shop" };
 
 export default function ShopPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 md:pb-32">
-      <PageHeading eyebrow="Available Now" title="Shop" />
+    <div className="px-5 pb-28 md:px-10 md:pb-[8vw]">
+      <PageHeading title="Shop" />
       <Reveal>
         <ShopifyBuyButton />
       </Reveal>
-      <p className="mt-16 text-xs text-grey-3">
-        Secure checkout powered by Shopify.
-      </p>
+      <p className="mt-16 text-[13px] font-bold text-muted">Secure checkout powered by Shopify.</p>
     </div>
   );
 }

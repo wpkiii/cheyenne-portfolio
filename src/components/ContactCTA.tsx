@@ -3,17 +3,18 @@ import Reveal from "./Reveal";
 
 export default function ContactCTA() {
   return (
-    <section className="bg-ink text-paper">
-      <Reveal className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-8 md:py-32">
-        <h2 className="font-display text-4xl font-thin uppercase tracking-tight md:text-6xl">
-          Get in Touch
+    <section className="px-5 pb-28 pt-10 md:px-10 md:pb-[14vw]">
+      <Reveal>
+        <h2 className="text-5xl font-bold tracking-[-0.03em] md:text-[4.45vw] md:leading-none">
+          Get In Touch
         </h2>
-        <p className="mx-auto mt-6 max-w-md text-paper/70">
-          For bookings, inquiries and collaborations, reach out — I&rsquo;d love to hear about your
-          project.
+        <p className="mt-6 text-lg font-bold md:text-[1.55vw]">
+          For inquiries or collaborations feel free to contact me.
         </p>
-        <div className="mt-10 [&_a]:border-paper [&_a:hover]:bg-paper [&_a:hover]:text-ink">
-          <ButtonLink href="/contact">Contact</ButtonLink>
+        <div className="mt-8">
+          <ButtonLink href="/contact" variant="solid">
+            Contact
+          </ButtonLink>
         </div>
       </Reveal>
     </section>

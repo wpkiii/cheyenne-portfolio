@@ -4,7 +4,7 @@ import { site } from "@/content/site";
 import { buttonClass } from "./ButtonLink";
 
 const fieldClass =
-  "w-full border-b border-grey-4 bg-transparent py-3 outline-none transition-colors placeholder:text-grey-4 focus:border-ink";
+  "w-full border border-white bg-transparent px-4 py-3 font-normal outline-none focus:border-2";
 
 /**
  * Opens the visitor's email app with the message pre-filled — no backend needed.
@@ -13,7 +13,7 @@ const fieldClass =
 export default function ContactForm() {
   return (
     <form
-      className="space-y-8"
+      className="space-y-6 text-[15px] font-bold"
       onSubmit={(e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
@@ -24,27 +24,21 @@ export default function ContactForm() {
         )}&body=${encodeURIComponent(body)}`;
       }}
     >
-      <div className="grid gap-8 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2">
         <label className="block">
-          <span className="sr-only">Name</span>
-          <input name="name" required placeholder="Name" className={fieldClass} />
+          Name *
+          <input name="name" required className={`mt-2 h-14 ${fieldClass}`} />
         </label>
         <label className="block">
-          <span className="sr-only">Email</span>
-          <input name="email" type="email" required placeholder="Email" className={fieldClass} />
+          Email *
+          <input name="email" type="email" required className={`mt-2 h-14 ${fieldClass}`} />
         </label>
       </div>
       <label className="block">
-        <span className="sr-only">Message</span>
-        <textarea
-          name="message"
-          required
-          rows={6}
-          placeholder="Message"
-          className={`${fieldClass} resize-y`}
-        />
+        Message *
+        <textarea name="message" required rows={6} className={`mt-2 resize-y ${fieldClass}`} />
       </label>
-      <button type="submit" className={`${buttonClass} cursor-pointer bg-transparent`}>
+      <button type="submit" className={`${buttonClass("solid")} cursor-pointer`}>
         Send
       </button>
     </form>

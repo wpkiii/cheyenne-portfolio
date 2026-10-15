@@ -7,9 +7,9 @@ export const metadata: Metadata = { title: "Privacy Policy" };
 // Placeholder policy — review before launch (Shopify can generate a store policy too).
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-8 md:pb-32">
-      <PageHeading eyebrow="Legal" title="Privacy Policy" />
-      <div className="space-y-5 leading-relaxed text-grey-2">
+    <div className="max-w-4xl px-5 pb-28 md:px-10 md:pb-[8vw]">
+      <PageHeading title="Privacy Policy" />
+      <div className="space-y-6 text-lg font-bold leading-snug">
         <p>
           This site is a portfolio for {site.name}. We collect only the information you choose to
           send — for example your name and email when you get in touch or subscribe to the
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         </p>
         <p>
           We do not sell your information. To ask about or delete any data we hold, email{" "}
-          <a href={`mailto:${site.email}`} className="underline hover:text-ink">
+          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-muted">
             {site.email}
           </a>
           .

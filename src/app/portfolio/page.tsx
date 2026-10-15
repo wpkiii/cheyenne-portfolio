@@ -7,8 +7,10 @@ export const metadata: Metadata = { title: "Portfolio" };
 
 export default function PortfolioPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 md:pb-32">
-      <PageHeading eyebrow="Selected Work" title="Portfolio" />
+    <div className="px-5 pb-28 md:pb-[10vw]">
+      <div className="md:px-5">
+        <PageHeading title="Portfolio" />
+      </div>
       <PortfolioGrid projects={projects} />
     </div>
   );

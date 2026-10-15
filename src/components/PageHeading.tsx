@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Reveal from "./Reveal";
 
-/** Shared top-of-page heading: small bold eyebrow + large thin title. */
+/** Shared top-of-page heading: optional small label + large bold title. */
 export default function PageHeading({
   eyebrow,
   title,
@@ -12,13 +12,9 @@ export default function PageHeading({
   children?: ReactNode;
 }) {
   return (
-    <Reveal className="pb-12 pt-12 md:pb-16 md:pt-20">
-      {eyebrow && (
-        <p className="font-display text-xs font-bold uppercase tracking-[0.35em] text-grey-3">
-          {eyebrow}
-        </p>
-      )}
-      <h1 className="mt-4 font-display text-5xl font-thin uppercase leading-none tracking-tight md:text-7xl">
+    <Reveal className="pb-12 pt-12 md:pb-[4vw] md:pt-[6vw]">
+      {eyebrow && <p className="text-[15px] font-bold text-muted">{eyebrow}</p>}
+      <h1 className="mt-3 text-5xl font-bold leading-none tracking-[-0.03em] md:text-[4.45vw]">
         {title}
       </h1>
       {children}

@@ -9,10 +9,14 @@ function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
+const linkClass = (active: boolean) =>
+  `font-bold uppercase transition-colors duration-200 ${
+    active ? "text-muted" : "text-white hover:text-muted"
+  }`;
+
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   // Close the mobile menu whenever the route changes.
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -22,43 +26,27 @@ export default function Header() {
   }
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
   return (
     <>
-      <header
-        className={`sticky top-0 z-40 bg-paper/95 backdrop-blur transition-[border-color] duration-300 ${
-          scrolled ? "border-b border-mist" : "border-b border-transparent"
-        }`}
-      >
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 md:h-20">
-          <Link href="/" className="font-display text-lg font-light uppercase tracking-[0.3em]">
+      <header className="sticky top-0 z-40 bg-black">
+        <div className="flex h-16 items-center justify-between px-5 md:px-8">
+          <Link href="/" className="text-[15px] font-bold uppercase tracking-tight">
             {site.name}
           </Link>
 
           <nav aria-label="Main" className="hidden md:block">
-            <ul className="flex gap-8">
+            <ul className="flex gap-7 pr-6 text-[15px]">
               {nav.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
                     aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                    className="group relative font-display text-xs font-bold uppercase tracking-[0.2em]"
+                    className={linkClass(isActive(pathname, item.href))}
                   >
                     {item.label}
-                    <span
-                      className={`absolute -bottom-1 left-0 h-px bg-ink transition-[width] duration-300 ease-out-soft ${
-                        isActive(pathname, item.href) ? "w-full" : "w-0 group-hover:w-full"
-                      }`}
-                    />
                   </Link>
                 </li>
               ))}
@@ -74,35 +62,34 @@ export default function Header() {
             onClick={() => setOpen((o) => !o)}
           >
             <span
-              className={`absolute left-0 top-1.5 h-px w-full bg-ink transition-transform duration-300 ${
+              className={`absolute left-0 top-1.5 h-0.5 w-full bg-white transition-transform duration-300 ${
                 open ? "translate-y-[5px] rotate-45" : ""
               }`}
             />
             <span
-              className={`absolute bottom-1.5 left-0 h-px w-full bg-ink transition-transform duration-300 ${
-                open ? "-translate-y-[6px] -rotate-45" : ""
+              className={`absolute bottom-1.5 left-0 h-0.5 w-full bg-white transition-transform duration-300 ${
+                open ? "-translate-y-[5px] -rotate-45" : ""
               }`}
             />
           </button>
         </div>
       </header>
 
-      {/* Outside <header>: its backdrop-filter would otherwise trap this fixed overlay. */}
       <nav
         id="mobile-nav"
         aria-label="Mobile"
-        className={`fixed inset-x-0 top-16 bottom-0 z-30 bg-paper transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-x-0 top-16 bottom-0 z-30 bg-black transition-opacity duration-300 md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
-        <ul className="flex flex-col items-center gap-8 pt-16">
+        <ul className="flex flex-col gap-4 px-5 pt-10">
           {nav.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}
                 tabIndex={open ? 0 : -1}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className="font-display text-2xl font-extralight uppercase tracking-[0.25em]"
+                className={`text-5xl tracking-tight ${linkClass(isActive(pathname, item.href))}`}
               >
                 {item.label}
               </Link>

@@ -23,19 +23,22 @@ All copy and images are driven by two files, so you never need to touch componen
 ### Adding photos
 
 1. Put files in `public/images/`:
-   - `public/images/hero.jpg` (home hero)
+   - `public/images/hero.jpg` (home hero; or a video at `public/videos/hero.mp4`)
    - `public/images/about-portrait.jpg`
    - `public/images/projects/<slug>/cover.jpg`, `01.jpg`, `02.jpg`, …
 2. Point to them in the content files, e.g. `cover: "/images/projects/project-01/cover.jpg"`.
-3. Set each project's `orientation` to `"portrait"` or `"landscape"`. Landscape tiles span two grid columns.
+3. Set each project's `orientation` to `"portrait"` (narrow tile) or `"landscape"` (wide tile). Projects pair up into rows, so alternate them.
 
 Originals at roughly 2000px+ on the long edge work well. `next/image` handles resizing and serves WebP/AVIF.
 
 ## Design system
 
-- **Colors and fonts** live in `src/app/globals.css` (`@theme`): `ink`, `paper`, `grey-1…4`, `mist`, `accent`.
-- **Type**: Inter (thin display, bold labels) stands in for Helvetica Neue; Montserrat is the body font.
-- **Motion**: `<Reveal>` (fade and slide on scroll), `<SmartImage>` (blur-to-sharp load), and a hover zoom plus title overlay on grid tiles. All of it respects `prefers-reduced-motion`.
+Modeled on the reference site: a black canvas with heavy white Helvetica, and a white footer.
+
+- **Colors and fonts** live in `src/app/globals.css` (`@theme`): Tailwind's `black` / `white`, plus `muted`, `faint`, `panel`, and `accent`. The font stack is Helvetica Neue → Helvetica → Arial → Inter.
+- **Hero** (`src/components/Hero.tsx`): the first role sits on the left, the media is centered, the second role runs off the right edge, and the full name spans the width below it. Sizes are in `vw`, measured from the reference at 1440px wide. For the center media, set `site.hero.video` (muted loop) and/or `site.hero.image`.
+- **Portfolio grid** (`src/components/PortfolioGrid.tsx`): two projects per row, pushed to opposite edges. Alternate `"portrait"` / `"landscape"` in `projects.ts` to keep the staggered rhythm. The home page shows the first 6 projects.
+- **Motion**: `<Reveal>` (fade and slide on scroll), `<SmartImage>` (blur-to-sharp load), and a gentle zoom on tile hover. All of it respects `prefers-reduced-motion`.
 
 ## Shop (Shopify Buy Button)
 

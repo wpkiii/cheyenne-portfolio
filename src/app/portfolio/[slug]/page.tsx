@@ -28,22 +28,22 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
   const next = projects[(index + 1) % projects.length];
 
   return (
-    <article className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 md:pb-32">
+    <article className="px-5 pb-28 md:px-10 md:pb-[8vw]">
       <Link
         href="/portfolio"
-        className="mt-8 inline-block font-display text-xs font-bold uppercase tracking-[0.25em] text-grey-3 hover:text-ink"
+        className="mt-8 inline-block text-[15px] font-bold text-muted transition-colors hover:text-white"
       >
-        ← All work
+        ← All Work
       </Link>
 
       <PageHeading eyebrow={project.subtitle} title={project.title}>
         {project.description && (
-          <p className="mt-6 max-w-xl leading-relaxed text-grey-2">{project.description}</p>
+          <p className="mt-6 max-w-2xl text-lg font-bold leading-snug">{project.description}</p>
         )}
       </PageHeading>
 
       {/* Landscape images span the full width; portrait images sit side by side. */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         {project.gallery.map((image, i) => {
           const landscape = image.orientation === "landscape";
           return (
@@ -66,12 +66,12 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
 
       <nav
         aria-label="More projects"
-        className="mt-20 flex justify-between border-t border-mist pt-8 font-display text-xs font-bold uppercase tracking-[0.25em]"
+        className="mt-20 flex justify-between gap-6 border-t border-white pt-8 text-lg font-bold md:text-2xl"
       >
-        <Link href={`/portfolio/${prev.slug}`} className="hover:text-grey-3">
+        <Link href={`/portfolio/${prev.slug}`} className="transition-colors hover:text-muted">
           ← {prev.title}
         </Link>
-        <Link href={`/portfolio/${next.slug}`} className="hover:text-grey-3">
+        <Link href={`/portfolio/${next.slug}`} className="text-right transition-colors hover:text-muted">
           {next.title} →
         </Link>
       </nav>

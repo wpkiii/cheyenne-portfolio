@@ -10,38 +10,35 @@ export default function NewsletterForm() {
   const [done, setDone] = useState(false);
 
   if (done) {
-    return <p className="mt-4 text-sm">Thanks for subscribing.</p>;
+    return <p className="mt-6 text-[15px] font-bold">Thanks for subscribing.</p>;
   }
 
   return (
     <form
-      className="mt-4 space-y-3"
+      className="mt-6 text-[15px] font-bold"
       onSubmit={(e) => {
         e.preventDefault();
         setDone(true);
       }}
     >
-      <label htmlFor="newsletter-email" className="sr-only">
-        Email
-      </label>
-      <div className="flex border-b border-ink">
+      <label htmlFor="newsletter-email">Enter Your Email *</label>
+      <div className="mt-2 flex max-w-md gap-3">
         <input
           id="newsletter-email"
           type="email"
           required
-          placeholder="Email"
-          className="w-full bg-transparent py-2 text-sm outline-none placeholder:text-grey-4"
+          className="h-14 min-w-0 flex-1 border border-black bg-transparent px-3 font-normal outline-none focus:border-2"
         />
         <button
           type="submit"
-          className="font-display text-xs font-bold uppercase tracking-[0.2em] hover:text-grey-3"
+          className="h-14 w-40 shrink-0 border border-black transition-colors hover:bg-black hover:text-white"
         >
           Subscribe
         </button>
       </div>
-      <label className="flex items-center gap-2 text-xs text-grey-3">
-        <input type="checkbox" required className="accent-ink" />
-        Yes, subscribe me to the newsletter.
+      <label className="mt-4 flex items-center gap-3">
+        <input type="checkbox" required className="h-5 w-5 accent-black" />
+        Yes, Subscribe me to newsletter
       </label>
     </form>
   );

@@ -6,9 +6,9 @@ export const metadata: Metadata = { title: "Accessibility Statement" };
 
 export default function AccessibilityPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-8 md:pb-32">
-      <PageHeading eyebrow="Legal" title="Accessibility" />
-      <div className="space-y-5 leading-relaxed text-grey-2">
+    <div className="max-w-4xl px-5 pb-28 md:px-10 md:pb-[8vw]">
+      <PageHeading title="Accessibility" />
+      <div className="space-y-6 text-lg font-bold leading-snug">
         <p>
           We want this site to be usable by everyone and aim to meet WCAG 2.2 AA. Pages support
           keyboard navigation, include a skip-to-content link, describe images with alternative
@@ -16,7 +16,7 @@ export default function AccessibilityPage() {
         </p>
         <p>
           If something is hard to use, please let us know at{" "}
-          <a href={`mailto:${site.email}`} className="underline hover:text-ink">
+          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-muted">
             {site.email}
           </a>{" "}
           and we&rsquo;ll fix it.

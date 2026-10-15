@@ -12,25 +12,26 @@ export type Project = {
   title: string;
   /** Short credit line, e.g. client / publication / event. */
   subtitle?: string;
-  /** Landscape tiles span two columns in the grid. */
+  /** Portrait tiles are narrow, landscape tiles wide; pair one of each per row. */
   orientation: Orientation;
   cover: string | null;
   gallery: { src: string | null; orientation: Orientation; alt?: string }[];
   description?: string;
 };
 
-// Mixed portrait/landscape rhythm, like the reference grid.
+// Projects display in pairs (one row each). Alternating portrait/landscape
+// order gives the staggered, off-balance rhythm of the reference grid.
 const layout: Orientation[] = [
   "portrait",
+  "landscape",
+  "landscape",
+  "portrait",
   "portrait",
   "landscape",
   "landscape",
   "portrait",
   "portrait",
-  "portrait",
-  "portrait",
   "landscape",
-  "portrait",
   "landscape",
   "portrait",
 ];

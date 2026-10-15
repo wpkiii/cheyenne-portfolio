@@ -2,16 +2,18 @@ import ButtonLink from "@/components/ButtonLink";
 
 export default function NotFound() {
   return (
-    <div className="mx-auto flex max-w-7xl flex-col items-start px-4 py-32 sm:px-8">
-      <p className="font-display text-xs font-bold uppercase tracking-[0.35em] text-grey-3">404</p>
-      <h1 className="mt-4 font-display text-5xl font-thin uppercase leading-none tracking-tight md:text-7xl">
+    <div className="px-5 py-28 md:px-10 md:py-[10vw]">
+      <p className="text-[15px] font-bold text-muted">404</p>
+      <h1 className="mt-3 text-5xl font-bold leading-none tracking-[-0.03em] md:text-[4.45vw]">
         Page not found
       </h1>
-      <p className="mt-6 max-w-md leading-relaxed text-grey-2">
+      <p className="mt-6 text-lg font-bold">
         The page you&rsquo;re looking for doesn&rsquo;t exist or has moved.
       </p>
       <div className="mt-10">
-        <ButtonLink href="/">Back home</ButtonLink>
+        <ButtonLink href="/" variant="solid">
+          Back Home
+        </ButtonLink>
       </div>
     </div>
   );

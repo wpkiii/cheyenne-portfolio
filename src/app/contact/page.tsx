@@ -6,37 +6,34 @@ import { site } from "@/content/site";
 
 export const metadata: Metadata = { title: "Contact" };
 
+const label = "text-[15px] font-bold text-muted";
+
 export default function ContactPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-8 md:pb-32">
-      <PageHeading eyebrow="Get in Touch" title="Contact">
-        <p className="mt-6 max-w-xl leading-relaxed text-grey-2">
-          For bookings, styling inquiries and creative collaborations, send a note below or reach
-          out directly.
+    <div className="px-5 pb-28 md:px-10 md:pb-[8vw]">
+      <PageHeading title="Contact">
+        <p className="mt-6 max-w-2xl text-lg font-bold leading-snug md:text-[1.55vw]">
+          For inquiries or collaborations feel free to contact me.
         </p>
       </PageHeading>
       <div className="grid gap-16 md:grid-cols-[1fr_2fr] md:gap-24">
-        <Reveal as="dl" className="space-y-8">
+        <Reveal as="dl" className="space-y-8 text-lg font-bold">
           <div>
-            <dt className="font-display text-xs font-bold uppercase tracking-[0.25em] text-grey-3">
-              Email
-            </dt>
-            <dd className="mt-2">
-              <a href={`mailto:${site.email}`} className="hover:text-grey-3">
+            <dt className={label}>Email</dt>
+            <dd className="mt-1">
+              <a href={`mailto:${site.email}`} className="transition-colors hover:text-muted">
                 {site.email}
               </a>
             </dd>
           </div>
           <div>
-            <dt className="font-display text-xs font-bold uppercase tracking-[0.25em] text-grey-3">
-              Instagram
-            </dt>
-            <dd className="mt-2">
+            <dt className={label}>Instagram</dt>
+            <dd className="mt-1">
               <a
                 href={site.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-grey-3"
+                className="transition-colors hover:text-muted"
               >
                 {site.instagramHandle}
               </a>
