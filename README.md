@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Cheyenne Daniels — Portfolio
 
-## Getting Started
+Portfolio site for Cheyenne Daniels (Stylist · Creative Director), built with Next.js + Tailwind and hosted on Vercel. Any image that hasn't been supplied yet shows a `?` placeholder.
 
-First, run the development server:
+## Develop
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # production build (run before pushing)
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Editing content
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+All copy and images are driven by two files, so you never need to touch components:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| File | Controls |
+|---|---|
+| `src/content/site.ts` | Name, roles, bio, email, Instagram, hero/about images, Shopify settings |
+| `src/content/projects.ts` | Portfolio projects: title, subtitle, cover, gallery, grid orientation |
 
-## Learn More
+### Adding photos
 
-To learn more about Next.js, take a look at the following resources:
+1. Put files in `public/images/`:
+   - `public/images/hero.jpg` (home hero)
+   - `public/images/about-portrait.jpg`
+   - `public/images/projects/<slug>/cover.jpg`, `01.jpg`, `02.jpg`, …
+2. Point to them in the content files, e.g. `cover: "/images/projects/project-01/cover.jpg"`.
+3. Set each project's `orientation` to `"portrait"` or `"landscape"`. Landscape tiles span two grid columns.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Originals at roughly 2000px+ on the long edge work well. `next/image` handles resizing and serves WebP/AVIF.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design system
 
-## Deploy on Vercel
+- **Colors and fonts** live in `src/app/globals.css` (`@theme`): `ink`, `paper`, `grey-1…4`, `mist`, `accent`.
+- **Type**: Inter (thin display, bold labels) stands in for Helvetica Neue; Montserrat is the body font.
+- **Motion**: `<Reveal>` (fade and slide on scroll), `<SmartImage>` (blur-to-sharp load), and a hover zoom plus title overlay on grid tiles. All of it respects `prefers-reduced-motion`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Shop (Shopify Buy Button)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Until the store is connected, `/shop` shows a "Coming soon" card. To connect it:
+
+1. In Shopify admin, open **Sales channels → Buy Button** and create a product Buy Button.
+2. From the embed code, copy `domain`, `storefrontAccessToken` and the product `id`.
+3. Add them as environment variables, locally in `.env.local` (see `.env.example`) and in **Vercel → Settings → Environment Variables**:
+   - `NEXT_PUBLIC_SHOPIFY_DOMAIN`
+   - `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN`
+   - `NEXT_PUBLIC_SHOPIFY_PRODUCT_ID`
+4. Redeploy.
+
+## Deploy
+
+Vercel imports this GitHub repo with zero config. Every push to `main` deploys to production, and other branches get preview URLs.

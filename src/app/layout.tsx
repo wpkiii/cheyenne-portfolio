@@ -21,6 +21,12 @@ export const metadata: Metadata = {
     template: `%s — ${site.name}`,
   },
   description: site.tagline,
+  openGraph: {
+    title: site.name,
+    description: site.tagline,
+    siteName: site.name,
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -29,6 +35,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${inter.variable} ${montserrat.variable} h-full antialiased`}
     >
+      <head>
+        {/* Without JS, show scroll-reveal content immediately. */}
+        <noscript>
+          <style>{`.reveal{opacity:1;transform:none}`}</style>
+        </noscript>
+      </head>
       <body className="flex min-h-full flex-col">
         <a
           href="#main"

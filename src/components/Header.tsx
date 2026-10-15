@@ -33,65 +33,65 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header
-      className={`sticky top-0 z-40 bg-paper/95 backdrop-blur transition-[border-color] duration-300 ${
-        scrolled ? "border-b border-mist" : "border-b border-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 md:h-20">
-        <Link
-          href="/"
-          className="font-display text-lg font-light uppercase tracking-[0.3em]"
-        >
-          {site.name}
-        </Link>
+    <>
+      <header
+        className={`sticky top-0 z-40 bg-paper/95 backdrop-blur transition-[border-color] duration-300 ${
+          scrolled ? "border-b border-mist" : "border-b border-transparent"
+        }`}
+      >
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-8 md:h-20">
+          <Link href="/" className="font-display text-lg font-light uppercase tracking-[0.3em]">
+            {site.name}
+          </Link>
 
-        <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex gap-8">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                  className="group relative font-display text-xs font-bold uppercase tracking-[0.2em]"
-                >
-                  {item.label}
-                  <span
-                    className={`absolute -bottom-1 left-0 h-px bg-ink transition-[width] duration-300 ease-out-soft ${
-                      isActive(pathname, item.href) ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
-                  />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <nav aria-label="Main" className="hidden md:block">
+            <ul className="flex gap-8">
+              {nav.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    aria-current={isActive(pathname, item.href) ? "page" : undefined}
+                    className="group relative font-display text-xs font-bold uppercase tracking-[0.2em]"
+                  >
+                    {item.label}
+                    <span
+                      className={`absolute -bottom-1 left-0 h-px bg-ink transition-[width] duration-300 ease-out-soft ${
+                        isActive(pathname, item.href) ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <button
-          type="button"
-          className="relative h-6 w-7 md:hidden"
-          aria-label={open ? "Close menu" : "Open menu"}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          onClick={() => setOpen((o) => !o)}
-        >
-          <span
-            className={`absolute left-0 top-1.5 h-px w-full bg-ink transition-transform duration-300 ${
-              open ? "translate-y-[5px] rotate-45" : ""
-            }`}
-          />
-          <span
-            className={`absolute bottom-1.5 left-0 h-px w-full bg-ink transition-transform duration-300 ${
-              open ? "-translate-y-[6px] -rotate-45" : ""
-            }`}
-          />
-        </button>
-      </div>
+          <button
+            type="button"
+            className="relative h-6 w-7 md:hidden"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span
+              className={`absolute left-0 top-1.5 h-px w-full bg-ink transition-transform duration-300 ${
+                open ? "translate-y-[5px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`absolute bottom-1.5 left-0 h-px w-full bg-ink transition-transform duration-300 ${
+                open ? "-translate-y-[6px] -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </div>
+      </header>
 
+      {/* Outside <header>: its backdrop-filter would otherwise trap this fixed overlay. */}
       <nav
         id="mobile-nav"
         aria-label="Mobile"
-        className={`fixed inset-x-0 top-16 bottom-0 bg-paper transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-x-0 top-16 bottom-0 z-30 bg-paper transition-opacity duration-300 md:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       >
@@ -110,6 +110,6 @@ export default function Header() {
           ))}
         </ul>
       </nav>
-    </header>
+    </>
   );
 }
