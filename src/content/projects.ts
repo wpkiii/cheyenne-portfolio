@@ -1,9 +1,11 @@
+import { looks, type LookImage } from "./looks";
+
 /**
- * Portfolio projects, in display order.
+ * Portfolio projects, in display order — one per look.
  *
- * To add photos: put files in public/images/projects/<slug>/ and reference them
- * here, e.g. cover: "/images/projects/project-01/cover.jpg". Any image left as
- * null renders a "?" placeholder.
+ * Images live in public/images/projects/<slug>/ and are listed in looks.ts.
+ * Titles, subtitles and descriptions are placeholders until each project is
+ * written up; edit them here.
  */
 export type Orientation = "portrait" | "landscape";
 
@@ -12,47 +14,33 @@ export type Project = {
   title: string;
   /** Short credit line, e.g. client / publication / event. */
   subtitle?: string;
-  /** Portrait tiles are narrow, landscape tiles wide; pair one of each per row. */
-  orientation: Orientation;
-  cover: string | null;
-  gallery: { src: string | null; orientation: Orientation; alt?: string }[];
   description?: string;
+  /** Grid tile shape; landscape tiles span two columns. Follows the cover's shape. */
+  orientation: Orientation;
+  cover: LookImage | null;
+  gallery: LookImage[];
 };
 
-// Projects display in pairs (one row each). Alternating portrait/landscape
-// order gives the staggered, off-balance rhythm of the reference grid.
-const layout: Orientation[] = [
-  "portrait",
-  "landscape",
-  "landscape",
-  "portrait",
-  "portrait",
-  "landscape",
-  "landscape",
-  "portrait",
-  "portrait",
-  "landscape",
-  "landscape",
-  "portrait",
-];
-
-export const projects: Project[] = layout.map((orientation, i) => {
-  const n = String(i + 1).padStart(2, "0");
+export const projects: Project[] = looks.map(({ slug, images }, i) => {
+  const cover = images[0] ?? null;
   return {
-    slug: `project-${n}`,
-    title: `Project ${n}`,
-    subtitle: "Client / Publication",
-    orientation,
-    cover: null,
-    gallery: [
-      { src: null, orientation: "landscape" },
-      { src: null, orientation: "portrait" },
-      { src: null, orientation: "portrait" },
-      { src: null, orientation: "landscape" },
-    ],
-    description: "A short description of the project, the team and credits will go here.",
+    slug,
+    title: `Look ${String(i + 1).padStart(2, "0")}`,
+    orientation: cover && cover.width > cover.height ? "landscape" : "portrait",
+    cover,
+    gallery: images,
   };
 });
+
+/**
+ * Projects shown on the home page, in order. Mixing tall and wide covers keeps
+ * the grid's rows even (2 portrait + 1 landscape fills a 4-column row).
+ */
+const featuredSlugs = ["look-01", "look-02", "look-07", "look-08", "look-03", "look-04"];
+
+export const featuredProjects = featuredSlugs
+  .map((slug) => projects.find((p) => p.slug === slug))
+  .filter((p): p is Project => Boolean(p));
 
 export function getProject(slug: string) {
   return projects.find((p) => p.slug === slug);
