@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { site } from "@/content/site";
 import Reveal from "./Reveal";
 import SmartImage from "./SmartImage";
@@ -47,9 +48,20 @@ export default function Hero() {
 
         <Reveal
           delay={100}
-          className="relative mx-5 mt-6 aspect-[4/3] overflow-hidden md:mx-auto md:mt-0 md:aspect-[856/423] md:w-[59.45vw]"
+          className="relative mx-5 mt-6 aspect-[4/3] md:mx-auto md:mt-0 md:aspect-[856/423] md:w-[59.45vw]"
         >
-          <HeroMedia />
+          <div className="absolute inset-0 overflow-hidden">
+            <HeroMedia />
+          </div>
+          {/* The orchid from Cheyenne's previous site, pinned over the frame's top-right corner. */}
+          <Image
+            src="/images/brand/orchid.png"
+            alt=""
+            width={736}
+            height={736}
+            preload
+            className="orchid pointer-events-none absolute -right-8 -top-12 z-10 w-36 md:-right-[5.5vw] md:-top-[6vw] md:w-[12.5vw]"
+          />
         </Reveal>
 
         {/* Deliberately overflows the right edge, like the reference. */}

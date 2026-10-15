@@ -4,21 +4,24 @@ import ContactCTA from "@/components/ContactCTA";
 import Hero from "@/components/Hero";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import Reveal from "@/components/Reveal";
-import { projects } from "@/content/projects";
-
-// The home page previews the first few projects; the rest live on /portfolio.
-const HOME_PROJECT_COUNT = 6;
+import { featuredProjects } from "@/content/projects";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <section aria-labelledby="work-heading" className="px-5 pt-10 md:pt-[6vw]">
-        <h2 id="work-heading" className="sr-only">
-          Selected Work
-        </h2>
-        <PortfolioGrid projects={projects.slice(0, HOME_PROJECT_COUNT)} />
-        <Reveal className="mt-20 text-center md:mt-[10vw]">
+      <section aria-labelledby="work-heading" className="px-5 pt-10 md:px-10 md:pt-[6vw]">
+        <Reveal>
+          <h2
+            id="work-heading"
+            className="mb-8 text-5xl font-bold tracking-[-0.03em] md:mb-[3vw] md:text-[4.45vw] md:leading-none"
+          >
+            Selected Work
+          </h2>
+        </Reveal>
+        {/* Featured looks only; the full set lives on /portfolio. */}
+        <PortfolioGrid projects={featuredProjects} />
+        <Reveal className="mt-12 text-center md:mt-[5vw]">
           <ButtonLink href="/portfolio">View All Work</ButtonLink>
         </Reveal>
       </section>

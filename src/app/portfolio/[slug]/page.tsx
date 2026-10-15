@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHeading from "@/components/PageHeading";
 import Reveal from "@/components/Reveal";
-import SmartImage from "@/components/SmartImage";
 import { getProject, projects } from "@/content/projects";
 
 export function generateStaticParams() {
@@ -31,7 +31,7 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
     <article className="px-5 pb-28 md:px-10 md:pb-[8vw]">
       <Link
         href="/portfolio"
-        className="mt-8 inline-block text-[15px] font-bold text-muted transition-colors hover:text-white"
+        className="mt-8 inline-block text-[15px] font-bold text-muted transition-colors hover:text-accent"
       >
         ← All Work
       </Link>
@@ -42,36 +42,34 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
         )}
       </PageHeading>
 
-      {/* Landscape images span the full width; portrait images sit side by side. */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        {project.gallery.map((image, i) => {
-          const landscape = image.orientation === "landscape";
-          return (
-            <Reveal
-              key={i}
-              className={`relative overflow-hidden ${
-                landscape ? "aspect-[3/2] md:col-span-2" : "aspect-[3/4]"
-              }`}
-            >
-              <SmartImage
-                src={image.src}
-                alt={image.alt ?? `${project.title} — image ${i + 1}`}
-                sizes={landscape ? "100vw" : "(min-width: 768px) 50vw, 100vw"}
-                preload={i === 0}
-              />
-            </Reveal>
-          );
-        })}
+      {/*
+        Like the look clusters on Cheyenne's previous site: the photos sit side by
+        side at one shared height, centered, each at its true aspect ratio.
+      */}
+      <div className="flex flex-wrap justify-center gap-3 md:gap-5">
+        {project.gallery.map((image, i) => (
+          <Reveal key={image.src} delay={(i % 4) * 100}>
+            <Image
+              src={image.src}
+              alt={`${project.title} — image ${i + 1}`}
+              width={image.width}
+              height={image.height}
+              sizes="(min-width: 768px) 40vw, 100vw"
+              preload={i === 0}
+              className="h-auto w-full md:h-[70vh] md:w-auto"
+            />
+          </Reveal>
+        ))}
       </div>
 
       <nav
         aria-label="More projects"
-        className="mt-20 flex justify-between gap-6 border-t border-white pt-8 text-lg font-bold md:text-2xl"
+        className="mt-20 flex justify-between gap-6 border-t border-accent pt-8 text-lg font-bold md:text-2xl"
       >
-        <Link href={`/portfolio/${prev.slug}`} className="transition-colors hover:text-muted">
+        <Link href={`/portfolio/${prev.slug}`} className="transition-colors hover:text-accent">
           ← {prev.title}
         </Link>
-        <Link href={`/portfolio/${next.slug}`} className="text-right transition-colors hover:text-muted">
+        <Link href={`/portfolio/${next.slug}`} className="text-right transition-colors hover:text-accent">
           {next.title} →
         </Link>
       </nav>

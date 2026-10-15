@@ -35,24 +35,24 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Instagram ${site.instagramHandle}`}
-              className="inline-block hover:opacity-60"
+              className="inline-block transition-colors hover:text-accent"
             >
               <InstagramIcon />
             </a>
             <p className="mt-2">
-              <a href={`mailto:${site.email}`} className="hover:opacity-60">
+              <a href={`mailto:${site.email}`} className="transition-colors hover:text-accent">
                 {site.email}
               </a>
             </p>
           </div>
           <ul className="space-y-1 text-[15px] font-bold underline underline-offset-2">
             <li>
-              <Link href="/privacy" className="hover:opacity-60">
+              <Link href="/privacy" className="transition-colors hover:text-accent">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/accessibility" className="hover:opacity-60">
+              <Link href="/accessibility" className="transition-colors hover:text-accent">
                 Accessibility Statement
               </Link>
             </li>

@@ -9,7 +9,8 @@
   --color-muted: #9a9a9a; /* inactive nav, secondary text */
   --color-faint: #5c5c5c; /* placeholder "?" */
   --color-panel: #141414; /* placeholder fill */
-  --color-accent: #ed1c24;
+  /* Orchid blue from Cheyenne's previous site — the site-wide accent. */
+  --color-accent: #3878ff;
 
   /* Helvetica where installed (Apple devices); Arial is its metric twin on Windows;
      Inter covers everything else. */
@@ -29,8 +30,56 @@ body {
 }
 
 ::selection {
-  background: var(--color-white);
+  background: var(--color-accent);
   color: var(--color-black);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/*
+ * Header links: a blue highlighter bar sits behind the bottom of each word and
+ * fills up to cover the whole word on hover / keyboard focus. The current
+ * page's link (aria-current) stays filled. Colors are set explicitly for every
+ * state so no browser default (e.g. visited/active link colors) can leak in.
+ */
+.nav-mark {
+  color: var(--color-white);
+  background-image: linear-gradient(var(--color-accent), var(--color-accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.3em;
+  padding: 0 0.15em;
+  margin: 0 -0.15em; /* bar overhangs the word slightly without shifting it */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition:
+    background-size 0.3s cubic-bezier(0.215, 0.61, 0.355, 1),
+    color 0.2s ease;
+}
+a:hover > .nav-mark,
+a:focus-visible > .nav-mark,
+[aria-current="page"] > .nav-mark,
+.nav-mark--filled {
+  background-size: 100% 100%;
+  color: var(--color-white);
+}
+
+/* Slow sway for the hero orchid. */
+@keyframes orchid-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg) translateY(0);
+  }
+  50% {
+    transform: rotate(3deg) translateY(-6px);
+  }
+}
+.orchid {
+  transform-origin: 30% 70%;
+  animation: orchid-sway 7s ease-in-out infinite;
 }
 
 /* Scroll-entrance animation used by <Reveal>. */
@@ -63,6 +112,12 @@ body {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  .nav-mark {
+    transition: none;
+  }
+  .orchid {
+    animation: none;
   }
   .reveal,
   .blur-load {

@@ -9,11 +9,6 @@ function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
 }
 
-const linkClass = (active: boolean) =>
-  `font-bold uppercase transition-colors duration-200 ${
-    active ? "text-muted" : "text-white hover:text-muted"
-  }`;
-
 export default function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -33,8 +28,9 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-40 bg-black">
         <div className="flex h-16 items-center justify-between px-5 md:px-8">
+          {/* The name always carries the full blue highlight. */}
           <Link href="/" className="text-[15px] font-bold uppercase tracking-tight">
-            {site.name}
+            <span className="nav-mark nav-mark--filled">{site.name}</span>
           </Link>
 
           <nav aria-label="Main" className="hidden md:block">
@@ -44,9 +40,9 @@ export default function Header() {
                   <Link
                     href={item.href}
                     aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                    className={linkClass(isActive(pathname, item.href))}
+                    className="font-bold uppercase"
                   >
-                    {item.label}
+                    <span className="nav-mark">{item.label}</span>
                   </Link>
                 </li>
               ))}
@@ -89,9 +85,9 @@ export default function Header() {
                 href={item.href}
                 tabIndex={open ? 0 : -1}
                 aria-current={isActive(pathname, item.href) ? "page" : undefined}
-                className={`text-5xl tracking-tight ${linkClass(isActive(pathname, item.href))}`}
+                className="text-5xl font-bold uppercase tracking-tight"
               >
-                {item.label}
+                <span className="nav-mark">{item.label}</span>
               </Link>
             </li>
           ))}

@@ -16,7 +16,7 @@ export default function AccessibilityPage() {
         </p>
         <p>
           If something is hard to use, please let us know at{" "}
-          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-muted">
+          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-accent">
             {site.email}
           </a>{" "}
           and we&rsquo;ll fix it.

@@ -21,7 +21,7 @@ export default function PrivacyPage() {
         </p>
         <p>
           We do not sell your information. To ask about or delete any data we hold, email{" "}
-          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-muted">
+          <a href={`mailto:${site.email}`} className="underline transition-colors hover:text-accent">
             {site.email}
           </a>
           .

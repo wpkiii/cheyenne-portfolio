@@ -21,7 +21,7 @@ export default function ContactPage() {
           <div>
             <dt className={label}>Email</dt>
             <dd className="mt-1">
-              <a href={`mailto:${site.email}`} className="transition-colors hover:text-muted">
+              <a href={`mailto:${site.email}`} className="transition-colors hover:text-accent">
                 {site.email}
               </a>
             </dd>
@@ -33,7 +33,7 @@ export default function ContactPage() {
                 href={site.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition-colors hover:text-muted"
+                className="transition-colors hover:text-accent"
               >
                 {site.instagramHandle}
               </a>

@@ -9,10 +9,11 @@ import type { ReactNode } from "react";
  */
 export type ButtonVariant = "solid" | "outline" | "dark";
 
+// Every variant fills with the orchid-blue accent on hover.
 const variants: Record<ButtonVariant, string> = {
-  solid: "border-white bg-white text-black hover:bg-transparent hover:text-white",
-  outline: "border-white text-white hover:bg-white hover:text-black",
-  dark: "border-black text-black hover:bg-black hover:text-white",
+  solid: "border-white bg-white text-black hover:border-accent hover:bg-accent",
+  outline: "border-white text-white hover:border-accent hover:bg-accent hover:text-black",
+  dark: "border-black text-black hover:border-accent hover:bg-accent",
 };
 
 export function buttonClass(variant: ButtonVariant = "outline") {
