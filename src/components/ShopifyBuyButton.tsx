@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 import { buttonClass } from "./ButtonLink";
-import Placeholder from "./Placeholder";
+import SmartImage from "./SmartImage";
 
 const SDK_URL = "https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js";
 
@@ -52,7 +52,8 @@ const pillButton = {
   ":focus": { "background-color": "#9a9a9a", color: "#000000" },
 };
 
-const { domain, storefrontAccessToken, productId, fallback } = site.shopify;
+const { domain, storefrontAccessToken, productId } = site.shop.shopify;
+const { checkoutUrl, product } = site.shop;
 const connected = Boolean(domain && storefrontAccessToken && productId);
 
 export default function ShopifyBuyButton() {
@@ -114,23 +115,35 @@ export default function ShopifyBuyButton() {
 
   if (connected && !failed) return <div ref={node} className="min-h-[400px]" />;
 
-  // Not connected yet (or the SDK failed to load): show a placeholder product card.
+  // No Shopify (or its SDK failed to load): our own product card, which buys
+  // through the hosted checkout link when one is set.
   return (
     <div className="grid gap-10 md:grid-cols-2 md:gap-16">
       <div className="relative aspect-[4/5] w-full overflow-hidden">
-        <Placeholder label="Product image coming soon" />
+        <SmartImage
+          src={product.image}
+          alt={product.title}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          preload
+        />
       </div>
       <div className="md:pt-8">
-        <h2 className="text-4xl font-bold tracking-[-0.03em] md:text-5xl">{fallback.title}</h2>
-        <p className="mt-4 text-xl font-bold">{fallback.price}</p>
-        <p className="mt-6 max-w-md text-lg font-bold leading-snug">{fallback.description}</p>
-        <button
-          type="button"
-          disabled
-          className={`${buttonClass("solid")} mt-10 cursor-not-allowed opacity-50 hover:bg-white hover:text-black`}
-        >
-          {failed ? "Store unavailable" : "Coming soon"}
-        </button>
+        <h2 className="text-4xl font-bold tracking-[-0.03em] md:text-5xl">{product.title}</h2>
+        <p className="mt-4 text-xl font-bold">{product.price}</p>
+        <p className="mt-6 max-w-md text-lg font-bold leading-snug">{product.description}</p>
+        {checkoutUrl ? (
+          <a href={checkoutUrl} className={`${buttonClass("solid")} mt-10`}>
+            Buy Now
+          </a>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className={`${buttonClass("solid")} mt-10 cursor-not-allowed opacity-50 hover:border-white hover:bg-white`}
+          >
+            {failed ? "Store unavailable" : "Coming soon"}
+          </button>
+        )}
       </div>
     </div>
   );

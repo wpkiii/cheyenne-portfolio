@@ -12,12 +12,13 @@ export default function PrivacyPage() {
       <div className="space-y-6 text-lg font-bold leading-snug">
         <p>
           This site is a portfolio for {site.name}. We collect only the information you choose to
-          send — for example your name and email when you get in touch or subscribe to the
-          newsletter — and use it solely to respond to you.
+          send — for example your name and email when you get in touch — and use it solely to
+          respond to you.
         </p>
         <p>
-          Purchases are processed by Shopify. When you check out, your payment and shipping details
-          are handled under Shopify&rsquo;s privacy policy; we never see or store card numbers.
+          Purchases are processed by a third-party checkout provider. Your payment and shipping
+          details are handled under that provider&rsquo;s privacy policy; we never see or store
+          card numbers.
         </p>
         <p>
           We do not sell your information. To ask about or delete any data we hold, email{" "}

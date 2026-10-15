@@ -4,9 +4,10 @@ import ContactCTA from "@/components/ContactCTA";
 import Hero from "@/components/Hero";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import Reveal from "@/components/Reveal";
-import { featuredProjects } from "@/content/projects";
+import { getFeaturedProjects } from "@/content/projects";
 
-export default function Home() {
+export default async function Home() {
+  const featuredProjects = await getFeaturedProjects();
   return (
     <>
       <Hero />

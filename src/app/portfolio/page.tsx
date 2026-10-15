@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import PageHeading from "@/components/PageHeading";
 import PortfolioGrid from "@/components/PortfolioGrid";
-import { projects } from "@/content/projects";
+import { getProjects } from "@/content/projects";
 
 export const metadata: Metadata = { title: "Portfolio" };
 
-export default function PortfolioPage() {
+export default async function PortfolioPage() {
+  const projects = await getProjects();
   return (
     <div className="px-5 pb-28 md:px-10 md:pb-[8vw]">
       <PageHeading title="Portfolio" />

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site } from "@/content/site";
 import CurrentYear from "./CurrentYear";
-import NewsletterForm from "./NewsletterForm";
+import ContactForm from "./ContactForm";
 
 function InstagramIcon() {
   return (
@@ -22,10 +22,10 @@ export default function Footer() {
           <Link href="/" className="text-4xl font-bold tracking-[-0.03em]">
             {site.name}
           </Link>
-          <h2 className="mt-16 text-3xl font-bold tracking-[-0.02em] md:mt-56">
-            Stay Connected with Us
-          </h2>
-          <NewsletterForm />
+          <h2 className="mt-12 text-3xl font-bold tracking-[-0.02em] md:mt-20">Get in Touch</h2>
+          <div className="mt-5 max-w-lg">
+            <ContactForm compact />
+          </div>
         </div>
 
         <div className="flex flex-col justify-end gap-10 border-t border-black py-10 md:flex-row md:items-end md:justify-around md:border-t-0 md:py-14">
@@ -34,10 +34,10 @@ export default function Footer() {
               href={site.instagram}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label={`Instagram ${site.instagramHandle}`}
-              className="inline-block transition-colors hover:text-accent"
+              className="inline-flex items-center gap-2 transition-colors hover:text-accent"
             >
               <InstagramIcon />
+              {site.instagramHandle}
             </a>
             <p className="mt-2">
               <a href={`mailto:${site.email}`} className="transition-colors hover:text-accent">

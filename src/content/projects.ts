@@ -1,11 +1,13 @@
+import { getDriveLooks, isDriveConfigured } from "@/lib/drive";
 import { looks, type LookImage } from "./looks";
 
 /**
  * Portfolio projects, in display order — one per look.
  *
- * Images live in public/images/projects/<slug>/ and are listed in looks.ts.
- * Titles, subtitles and descriptions are placeholders until each project is
- * written up; edit them here.
+ * Source of truth:
+ * - Google Drive, when GOOGLE_DRIVE_API_KEY + GOOGLE_DRIVE_FOLDER_ID are set
+ *   (see src/lib/drive.ts): one subfolder per look, titled by the folder name.
+ * - Otherwise the bundled looks in public/images/projects (src/content/looks.ts).
  */
 export type Orientation = "portrait" | "landscape";
 
@@ -21,27 +23,44 @@ export type Project = {
   gallery: LookImage[];
 };
 
-export const projects: Project[] = looks.map(({ slug, images }, i) => {
+/** How many looks the home page's Selected Work shows. */
+const FEATURED_COUNT = 6;
+
+/**
+ * Bundled looks shown on the home page, in order. Mixing tall and wide covers
+ * keeps the grid's rows even. (With Drive, the first six folders are shown.)
+ */
+const localFeatured = ["look-01", "look-02", "look-07", "look-08", "look-03", "look-04"];
+
+function toProject(slug: string, title: string, images: LookImage[]): Project {
   const cover = images[0] ?? null;
   return {
     slug,
-    title: `Look ${String(i + 1).padStart(2, "0")}`,
+    title,
     orientation: cover && cover.width > cover.height ? "landscape" : "portrait",
     cover,
     gallery: images,
   };
-});
+}
 
-/**
- * Projects shown on the home page, in order. Mixing tall and wide covers keeps
- * the grid's rows even (2 portrait + 1 landscape fills a 4-column row).
- */
-const featuredSlugs = ["look-01", "look-02", "look-07", "look-08", "look-03", "look-04"];
+export async function getProjects(): Promise<Project[]> {
+  if (isDriveConfigured()) {
+    const driveLooks = await getDriveLooks();
+    return driveLooks.map((look) => toProject(look.slug, look.title, look.images));
+  }
+  return looks.map(({ slug, images }, i) =>
+    toProject(slug, `Look ${String(i + 1).padStart(2, "0")}`, images),
+  );
+}
 
-export const featuredProjects = featuredSlugs
-  .map((slug) => projects.find((p) => p.slug === slug))
-  .filter((p): p is Project => Boolean(p));
+export async function getFeaturedProjects(): Promise<Project[]> {
+  const projects = await getProjects();
+  if (isDriveConfigured()) return projects.slice(0, FEATURED_COUNT);
+  return localFeatured
+    .map((slug) => projects.find((p) => p.slug === slug))
+    .filter((p): p is Project => Boolean(p));
+}
 
-export function getProject(slug: string) {
-  return projects.find((p) => p.slug === slug);
+export async function getProject(slug: string) {
+  return (await getProjects()).find((p) => p.slug === slug);
 }

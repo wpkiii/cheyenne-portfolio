@@ -1,5 +1,5 @@
 /**
- * Site-wide content. Edit this file to update names, copy, links and Shopify IDs —
+ * Site-wide content. Edit this file to update names, copy, links and shop settings —
  * no component changes needed.
  */
 export const site = {
@@ -8,9 +8,9 @@ export const site = {
   // Shown in the hero and page metadata.
   roles: ["Stylist", "Creative Director"],
   tagline: "Styling and creative direction.",
-  email: "hello@example.com",
-  instagram: "https://instagram.com/",
-  instagramHandle: "@handle",
+  email: "cdstudios111@gmail.com",
+  instagram: "https://www.instagram.com/cchey.ennee/",
+  instagramHandle: "@cchey.ennee",
 
   hero: {
     // Center media. A video (muted, looping) wins over the image; the image is
@@ -33,19 +33,26 @@ export const site = {
   },
 
   /**
-   * Shopify Buy Button settings. Fill these in once the store and product exist
-   * (Shopify admin → Sales channels → Buy Button → generated embed code).
-   * Environment variables take precedence so values can live in Vercel instead.
+   * The shop's one product. Checkout works one of two ways — set whichever is
+   * used as environment variables in Vercel (see .env.example):
+   * - Shopify Buy Button: NEXT_PUBLIC_SHOPIFY_DOMAIN, _STOREFRONT_TOKEN, _PRODUCT_ID.
+   *   Shopify's card shows its own product details and cart.
+   * - Any hosted checkout link (Stripe Payment Link, Square, PayPal):
+   *   NEXT_PUBLIC_CHECKOUT_URL. The details below are shown with a Buy button.
+   * With neither set, the product shows as "Coming soon".
    */
-  shopify: {
-    domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN ?? "",
-    storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN ?? "",
-    productId: process.env.NEXT_PUBLIC_SHOPIFY_PRODUCT_ID ?? "",
-    // Shown while the store is not connected yet.
-    fallback: {
+  shop: {
+    shopify: {
+      domain: process.env.NEXT_PUBLIC_SHOPIFY_DOMAIN ?? "",
+      storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN ?? "",
+      productId: process.env.NEXT_PUBLIC_SHOPIFY_PRODUCT_ID ?? "",
+    },
+    checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "",
+    product: {
       title: "Product Name",
       price: "$55.00",
       description: "A short description of the product will go here.",
+      image: null as string | null, // e.g. "/images/shop/product.jpg"
     },
   },
 } as const;

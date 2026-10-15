@@ -13,17 +13,42 @@ npm run lint
 
 ## Editing content
 
-All copy and images are driven by two files, so you never need to touch components:
+Copy and settings live in a few files, and portfolio photos can come from Google Drive, so you never need to touch components:
 
 | File | Controls |
 |---|---|
-| `src/content/site.ts` | Name, roles, bio, email, Instagram, hero/about images, Shopify settings |
-| `src/content/projects.ts` | Portfolio projects: titles, subtitles, descriptions, which looks are featured on the home page |
-| `src/content/looks.ts` | Image list (with pixel sizes) for each look; files live in `public/images/projects/look-XX/` |
+| `src/content/site.ts` | Name, roles, bio, email, Instagram, hero/about images, shop product |
+| `src/content/projects.ts` | How looks become projects; which bundled looks are featured on the home page |
+| `src/content/looks.ts` | Bundled image list (with pixel sizes), used when Google Drive isn't connected |
+| `src/lib/drive.ts` | Google Drive integration |
+
+## Portfolio looks from Google Drive
+
+When `GOOGLE_DRIVE_API_KEY` and `GOOGLE_DRIVE_FOLDER_ID` are set (see `.env.example`), the portfolio reads looks straight from a shared Drive folder. Without them it uses the bundled images in `public/images/projects/`.
+
+```
+Portfolio Looks/          ← shared: Anyone with the link → Viewer
+  01 Fur Coat/            ← one folder per look; "01 " sets the order and is dropped from the title
+    01.jpg                ← first image (by name) is the grid cover
+    02.jpg
+  02 Red Carpet/
+```
+
+- **Order**: folders and photos sort by name, so number them (`01`, `02`, … `10` sorts after `9`).
+- **Home page**: shows the first 6 looks.
+- **Formats**: JPG, PNG, WebP, AVIF, GIF. iPhone HEIC photos are skipped, so export them as JPG first. Empty folders and non-image files are ignored.
+- **Updates**: the site re-checks Drive every 5 minutes, with no redeploy needed. To refresh immediately, open `/api/revalidate?secret=<REVALIDATE_SECRET>`.
+- **Images**: they're served through `/api/drive/<file id>`, which only serves files inside the looks folder, and `next/image` resizes them.
+
+### One-time setup
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project, enable the **Google Drive API**, and create an **API key** (APIs & Services → Credentials). Restrict the key to the Drive API.
+2. In Google Drive, create the `Portfolio Looks` folder, upload the look folders (the current 24 are in `public/images/projects/`), and set **Share → General access → Anyone with the link → Viewer**.
+3. In Vercel → Settings → Environment Variables, set `GOOGLE_DRIVE_API_KEY`, `GOOGLE_DRIVE_FOLDER_ID` (the last part of the folder's URL) and `REVALIDATE_SECRET`, then redeploy.
 
 ### Adding photos
 
-- **Portfolio looks**: each look has its own folder, `public/images/projects/look-01/` … `look-24/`, with photos named `01.jpg`, `02.jpg`, …. The current images came from Cheyenne's old Canva site at roughly 600×800px; swap in her full-resolution originals using the same names, then update the `width` / `height` in `src/content/looks.ts`. The first image in each folder is the grid cover.
+- **Portfolio looks**: add these through Google Drive (above). The bundled fallback folders `public/images/projects/look-01/` … `look-24/` hold the images from Cheyenne's old Canva site, at roughly 600×800px.
 - **Hero**: `public/images/hero.jpg` or a video at `public/videos/hero.mp4`, set in `site.hero`.
 - **About portrait**: `public/images/about-portrait.jpg`, set in `site.about.image`.
 - **Brand**: the orchid lives at `public/images/brand/orchid.png`.
@@ -38,22 +63,23 @@ Modeled on the reference site: a black canvas with heavy white Helvetica, and a 
 - **Hero** (`src/components/Hero.tsx`): the first role sits on the left, the media is centered, the second role runs off the right edge, and the full name spans the width below it. Sizes are in `vw`, measured from the reference at 1440px wide. For the center media, set `site.hero.video` (muted loop) and/or `site.hero.image`.
 - **Header**: links use a blue highlighter bar (`.nav-mark` in `globals.css`) that fills the word on hover; the current page stays filled, and the name always is.
 - **Hero orchid**: pinned over the media frame's top-right corner with a slow sway (off under reduced motion).
-- **Portfolio grid** (`src/components/PortfolioGrid.tsx`): four columns (two on phones). A look whose cover is wider than tall spans two columns. The home page shows the looks listed in `featuredSlugs` in `projects.ts`.
+- **Portfolio grid** (`src/components/PortfolioGrid.tsx`): four columns (two on phones). A look whose cover is wider than tall spans two columns. The home page shows the first 6 looks (for the bundled looks, the list in `projects.ts`).
 - **Project pages**: a look's photos sit side by side at one height, each at its true aspect ratio, like the look clusters on the old site.
 - **Motion**: `<Reveal>` (fade and slide on scroll), `<SmartImage>` (blur-to-sharp load), and a gentle zoom on tile hover. All of it respects `prefers-reduced-motion`.
 
-## Shop (Shopify Buy Button)
+## Shop
 
-Until the store is connected, `/shop` shows a "Coming soon" card. To connect it:
+The shop has one product. Checkout works one of two ways; set one in Vercel's environment variables (see `.env.example`) and redeploy. With neither set, `/shop` shows "Coming soon".
 
-1. In Shopify admin, open **Sales channels → Buy Button** and create a product Buy Button.
-2. From the embed code, copy `domain`, `storefrontAccessToken` and the product `id`.
-3. Add them as environment variables, locally in `.env.local` (see `.env.example`) and in **Vercel → Settings → Environment Variables**:
-   - `NEXT_PUBLIC_SHOPIFY_DOMAIN`
-   - `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN`
-   - `NEXT_PUBLIC_SHOPIFY_PRODUCT_ID`
-4. Redeploy.
+- **Hosted checkout link** (no monthly fee): set `NEXT_PUBLIC_CHECKOUT_URL` to a Stripe Payment Link (or a Square or PayPal checkout link). The product's name, price, description and photo come from `site.shop.product` in `site.ts`.
+- **Shopify Buy Button** (Starter plan): set `NEXT_PUBLIC_SHOPIFY_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` and `NEXT_PUBLIC_SHOPIFY_PRODUCT_ID` from Shopify admin → Sales channels → Buy Button → embed code. Shopify's card shows its own product details and cart.
+
+## Contact
+
+The Contact page and a compact form in the footer open the visitor's email app, addressed to `site.email`. No backend is involved.
 
 ## Deploy
 
 Vercel imports this GitHub repo with zero config. Every push to `main` deploys to production, and other branches get preview URLs.
+
+**Custom domain (registered at GoDaddy):** in Vercel → Project → Settings → Domains, add both `example.com` and `www.example.com`. Vercel then shows the exact DNS records to create. In GoDaddy → My Products → Domain → DNS, replace the old site's `@` A record and `www` CNAME with Vercel's values, and leave any email (MX/TXT) records alone. HTTPS turns on automatically once DNS updates.

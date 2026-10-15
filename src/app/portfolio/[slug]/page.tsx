@@ -4,23 +4,26 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PageHeading from "@/components/PageHeading";
 import Reveal from "@/components/Reveal";
-import { getProject, projects } from "@/content/projects";
+import { getProject, getProjects } from "@/content/projects";
 
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+// Looks that exist at build time are prerendered; looks added to Drive later
+// render on their first visit and are cached after that.
+export async function generateStaticParams() {
+  return (await getProjects()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/portfolio/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProject(slug);
   return project ? { title: project.title, description: project.description } : {};
 }
 
 export default async function ProjectPage({ params }: PageProps<"/portfolio/[slug]">) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const projects = await getProjects();
+  const project = projects.find((p) => p.slug === slug);
   if (!project) notFound();
 
   const index = projects.indexOf(project);

@@ -12,7 +12,7 @@ export default function ShopPage() {
       <Reveal>
         <ShopifyBuyButton />
       </Reveal>
-      <p className="mt-16 text-[13px] font-bold text-muted">Secure checkout powered by Shopify.</p>
+      <p className="mt-16 text-[13px] font-bold text-muted">Payments are processed securely by our checkout provider.</p>
     </div>
   );
 }
