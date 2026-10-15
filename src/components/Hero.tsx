@@ -17,7 +17,11 @@ export default function Hero() {
       <div className="mt-8 flex flex-col gap-2 md:mt-12 md:flex-row md:items-end md:justify-between">
         <Reveal delay={250}>
           <h1 className="font-display text-6xl font-thin uppercase leading-none tracking-tight sm:text-8xl lg:text-9xl">
-            {site.name}
+            {site.name.split(" ").map((part) => (
+              <span key={part} className="block">
+                {part}
+              </span>
+            ))}
           </h1>
         </Reveal>
         <Reveal delay={350} className="md:text-right">

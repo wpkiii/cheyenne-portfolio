@@ -20,7 +20,7 @@ export default function AboutTeaser() {
         </h2>
         <p className="mt-6 max-w-md leading-relaxed text-grey-2">{site.about.short}</p>
         <div className="mt-10">
-          <ButtonLink href="/portfolio">{site.name}&rsquo;s Work</ButtonLink>
+          <ButtonLink href="/portfolio">{site.firstName}&rsquo;s Work</ButtonLink>
         </div>
       </Reveal>
     </section>

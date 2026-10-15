@@ -3,10 +3,11 @@
  * no component changes needed.
  */
 export const site = {
-  name: "Cheyenne",
+  name: "Cheyenne Daniels",
+  firstName: "Cheyenne",
   // Shown in the hero and page metadata.
-  roles: ["Stylist", "Creative Director", "Product Designer"],
-  tagline: "Styling, creative direction and product design.",
+  roles: ["Stylist", "Creative Director"],
+  tagline: "Styling and creative direction.",
   email: "hello@example.com",
   instagram: "https://instagram.com/",
   instagramHandle: "@handle",
@@ -20,11 +21,11 @@ export const site = {
     image: null as string | null, // e.g. "/images/about-portrait.jpg"
     heading: "Stylist Overview",
     short:
-      "Cheyenne is a stylist, creative director and product designer. A short introduction about her work, clients and point of view will go here.",
+      "Cheyenne is a stylist and creative director. A short introduction about her work, clients and point of view will go here.",
     long: [
       "A longer biography will go here — background, training, and how she approaches styling and creative direction.",
       "A second paragraph can cover notable clients, publications, events and collaborations.",
-      "A closing paragraph about her product design work and what she is building next.",
+      "A closing paragraph about what she is working on next.",
     ],
   },
 
