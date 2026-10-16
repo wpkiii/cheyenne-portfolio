@@ -43,14 +43,22 @@ function toProject(slug: string, title: string, images: LookImage[]): Project {
   };
 }
 
-export async function getProjects(): Promise<Project[]> {
-  if (isDriveConfigured()) {
-    const driveLooks = await getDriveLooks();
-    return driveLooks.map((look) => toProject(look.slug, look.title, look.images));
-  }
+function bundledProjects(): Project[] {
   return looks.map(({ slug, images }, i) =>
     toProject(slug, `Look ${String(i + 1).padStart(2, "0")}`, images),
   );
+}
+
+export async function getProjects(): Promise<Project[]> {
+  if (!isDriveConfigured()) return bundledProjects();
+  const drive = await getDriveLooks();
+  if (drive.looks) return drive.looks.map((look) => toProject(look.slug, look.title, look.images));
+  // During a deploy, a Drive problem (bad key, folder not shared…) shouldn't fail
+  // the whole build: ship the bundled looks and say why. At runtime, throw so the
+  // site keeps serving the last good Drive version instead.
+  if (process.env.NEXT_PHASE !== "phase-production-build") throw new Error(drive.error);
+  console.error(`\n⚠ Google Drive unavailable, using bundled looks — ${drive.error}\n`);
+  return bundledProjects();
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {

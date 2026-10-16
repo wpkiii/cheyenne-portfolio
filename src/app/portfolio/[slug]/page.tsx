@@ -10,7 +10,10 @@ import { getProject, getProjects } from "@/content/projects";
 // Looks that exist at build time are prerendered; looks added to Drive later
 // render on their first visit and are cached after that.
 export async function generateStaticParams() {
-  return (await getProjects()).map((p) => ({ slug: p.slug }));
+  const slugs = (await getProjects()).map((p) => ({ slug: p.slug }));
+  // Cache Components needs at least one entry; with an empty Drive folder this
+  // placeholder simply prerenders as "not found".
+  return slugs.length ? slugs : [{ slug: "no-looks-yet" }];
 }
 
 export async function generateMetadata({

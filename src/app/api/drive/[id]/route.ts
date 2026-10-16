@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: RouteContext<"/api/driv
   const { id } = await params;
   if (!isDriveConfigured()) return new Response("Not found", { status: 404 });
 
-  const looks = await getDriveLooks();
+  const { looks = [] } = await getDriveLooks();
   const image = looks.flatMap((look) => look.images).find((img) => img.id === id);
   if (!image) return new Response("Not found", { status: 404 });
 

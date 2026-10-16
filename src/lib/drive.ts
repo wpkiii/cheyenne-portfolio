@@ -68,7 +68,12 @@ async function listChildren(apiKey: string, parentId: string): Promise<DriveFile
     if (pageToken) params.set("pageToken", pageToken);
     const res = await fetch(`${API}?${params}`);
     if (!res.ok) {
-      throw new Error(`Google Drive list failed (${res.status}): ${await res.text()}`);
+      // Google's own explanation, e.g. "API key not valid" or "File not found".
+      const reason = await res
+        .json()
+        .then((b: { error?: { message?: string } }) => b.error?.message)
+        .catch(() => undefined);
+      throw new Error(`Google Drive list failed (${res.status}): ${reason ?? res.statusText}`);
     }
     const body = (await res.json()) as { files: DriveFile[]; nextPageToken?: string };
     files.push(...body.files);
@@ -96,13 +101,29 @@ function slugify(text: string) {
   );
 }
 
-/** All looks in the shared folder, in display order. Cached; see DRIVE_TAG. */
-export async function getDriveLooks(): Promise<DriveLook[]> {
+export type DriveResult = { looks: DriveLook[]; error?: never } | { looks?: never; error: string };
+
+/**
+ * All looks in the shared folder, in display order. Cached; see DRIVE_TAG.
+ * Errors come back as a value: an error thrown inside a cached function fails
+ * the whole build, even if the caller catches it.
+ */
+export async function getDriveLooks(): Promise<DriveResult> {
   "use cache";
   cacheTag(DRIVE_TAG);
-  // Check Drive at most every 5 minutes; keep serving the last good copy meanwhile.
-  cacheLife({ stale: 300, revalidate: 300, expire: 60 * 60 * 24 * 30 });
+  try {
+    const looks = await loadDriveLooks();
+    // Check Drive at most every 5 minutes; keep serving the last good copy meanwhile.
+    cacheLife({ stale: 300, revalidate: 300, expire: 60 * 60 * 24 * 30 });
+    return { looks };
+  } catch (err) {
+    // Retry after a minute rather than remembering the failure for 5.
+    cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+    return { error: (err as Error).message };
+  }
+}
 
+async function loadDriveLooks(): Promise<DriveLook[]> {
   const cfg = config();
   if (!cfg) return [];
 
