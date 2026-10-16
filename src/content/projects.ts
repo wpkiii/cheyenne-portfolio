@@ -23,8 +23,12 @@ export type Project = {
   gallery: LookImage[];
 };
 
-/** How many looks the home page's Selected Work shows. */
-const FEATURED_COUNT = 6;
+/**
+ * Grid spots the home page's Selected Work fills: two full rows of the
+ * four-column grid (four rows on phones). Tall covers take one spot, wide
+ * covers two.
+ */
+const FEATURED_SLOTS = 8;
 
 /**
  * Bundled looks shown on the home page, in order. Mixing tall and wide covers
@@ -63,10 +67,28 @@ export async function getProjects(): Promise<Project[]> {
 
 export async function getFeaturedProjects(): Promise<Project[]> {
   const projects = await getProjects();
-  if (isDriveConfigured()) return projects.slice(0, FEATURED_COUNT);
+  if (isDriveConfigured()) return fillSlots(projects, FEATURED_SLOTS);
   return localFeatured
     .map((slug) => projects.find((p) => p.slug === slug))
     .filter((p): p is Project => Boolean(p));
+}
+
+/**
+ * Takes looks in order until `slots` grid spots are filled, so the rows end
+ * flush. A wide look that won't fit in the last spot is skipped for the next
+ * tall one.
+ */
+function fillSlots(projects: Project[], slots: number): Project[] {
+  const picked: Project[] = [];
+  let used = 0;
+  for (const project of projects) {
+    const span = project.orientation === "landscape" ? 2 : 1;
+    if (used + span > slots) continue;
+    picked.push(project);
+    used += span;
+    if (used === slots) break;
+  }
+  return picked;
 }
 
 export async function getProject(slug: string) {

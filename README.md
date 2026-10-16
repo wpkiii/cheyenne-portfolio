@@ -35,7 +35,7 @@ Portfolio Looks/          ← shared: Anyone with the link → Viewer
 ```
 
 - **Order**: folders and photos sort by name, so number them (`01`, `02`, … `10` sorts after `9`).
-- **Home page**: shows the first 6 looks.
+- **Home page**: Selected Work fills two full rows with the first looks in order: a tall cover takes one spot and a wide cover takes two, so it shows 4–8 looks. A wide look that won't fit the last spot is skipped for the next tall one.
 - **Formats**: JPG, PNG, WebP, AVIF, GIF. iPhone HEIC photos are skipped, so export them as JPG first. Empty folders and non-image files are ignored.
 - **Updates**: the site re-checks Drive every 5 minutes, with no redeploy needed. To refresh immediately, open `/api/revalidate?secret=<REVALIDATE_SECRET>`.
 - **Images**: they're served through `/api/drive/<file id>`, which only serves files inside the looks folder, and `next/image` resizes them.
@@ -63,7 +63,7 @@ Modeled on the reference site: a black canvas with heavy white Helvetica, and a 
 - **Hero** (`src/components/Hero.tsx`): the first role sits on the left, the media is centered, the second role runs off the right edge, and the full name spans the width below it. Sizes are in `vw`, measured from the reference at 1440px wide. For the center media, set `site.hero.video` (muted loop) and/or `site.hero.image`.
 - **Header**: links use a blue highlighter bar (`.nav-mark` in `globals.css`) that fills the word on hover; the current page stays filled, and the name always is.
 - **Hero orchid**: pinned over the media frame's top-right corner with a slow sway (off under reduced motion).
-- **Portfolio grid** (`src/components/PortfolioGrid.tsx`): four columns (two on phones). A look whose cover is wider than tall spans two columns. The home page shows the first 6 looks (for the bundled looks, the list in `projects.ts`).
+- **Portfolio grid** (`src/components/PortfolioGrid.tsx`): four columns (two on phones). A look whose cover is wider than tall spans two columns. The home page fills two full rows with the first looks (for the bundled looks, the list in `projects.ts`).
 - **Project pages**: a look's photos sit side by side at one height, each at its true aspect ratio, like the look clusters on the old site.
 - **Motion**: `<Reveal>` (fade and slide on scroll), `<SmartImage>` (blur-to-sharp load), and a gentle zoom on tile hover. All of it respects `prefers-reduced-motion`.
 
