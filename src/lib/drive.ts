@@ -35,9 +35,19 @@ type DriveFile = {
   imageMediaMetadata?: { width?: number; height?: number; rotation?: number };
 };
 
+/**
+ * Accepts the bare folder ID or the whole share link
+ * ("https://drive.google.com/drive/folders/<id>?usp=sharing"), ignoring stray
+ * quotes and spaces.
+ */
+function parseFolderId(value: string) {
+  const cleaned = value.trim().replace(/^["']|["']$/g, "");
+  return cleaned.match(/folders\/([\w-]+)/)?.[1] ?? cleaned.match(/[?&]id=([\w-]+)/)?.[1] ?? cleaned;
+}
+
 function config() {
-  const apiKey = process.env.GOOGLE_DRIVE_API_KEY;
-  const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
+  const apiKey = process.env.GOOGLE_DRIVE_API_KEY?.trim();
+  const folderId = parseFolderId(process.env.GOOGLE_DRIVE_FOLDER_ID ?? "");
   return apiKey && folderId ? { apiKey, folderId } : null;
 }
 
@@ -73,7 +83,9 @@ async function listChildren(apiKey: string, parentId: string): Promise<DriveFile
         .json()
         .then((b: { error?: { message?: string } }) => b.error?.message)
         .catch(() => undefined);
-      throw new Error(`Google Drive list failed (${res.status}): ${reason ?? res.statusText}`);
+      throw new Error(
+        `Google Drive list failed (${res.status}) for folder "${parentId}": ${reason ?? res.statusText}`,
+      );
     }
     const body = (await res.json()) as { files: DriveFile[]; nextPageToken?: string };
     files.push(...body.files);
