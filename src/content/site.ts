@@ -12,6 +12,16 @@ export const site = {
   instagram: "https://www.instagram.com/cchey.ennee/",
   instagramHandle: "@cchey.ennee",
 
+  /**
+   * Public address, used for link previews and the sitemap. Set NEXT_PUBLIC_SITE_URL
+   * once the domain is connected; until then Vercel's production address is used.
+   */
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000"),
+
   hero: {
     // Center media. A video (muted, looping) wins over the image; the image is
     // also used as the video's poster frame. Files go in public/, e.g.

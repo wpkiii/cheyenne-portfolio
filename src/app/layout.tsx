@@ -13,6 +13,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  // Makes the share image (app/opengraph-image.png) a full URL other sites can fetch.
+  metadataBase: new URL(site.url),
   title: {
     default: `${site.name} — ${site.roles.join(" · ")}`,
     template: `%s — ${site.name}`,
@@ -24,6 +26,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     type: "website",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
