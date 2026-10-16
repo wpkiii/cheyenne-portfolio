@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -43,7 +44,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </a>
         <Header />
         <main id="main" className="flex-1">
-          {children}
+          {/* Pages crossfade on navigation; header and footer stay put. */}
+          <ViewTransition default="page">{children}</ViewTransition>
         </main>
         <Footer />
       </body>

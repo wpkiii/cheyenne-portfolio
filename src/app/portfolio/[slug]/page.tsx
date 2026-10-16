@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ViewTransition } from "react";
 import PageHeading from "@/components/PageHeading";
 import Reveal from "@/components/Reveal";
 import { getProject, getProjects } from "@/content/projects";
@@ -50,8 +51,8 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
         side at one shared height, centered, each at its true aspect ratio.
       */}
       <div className="flex flex-wrap justify-center gap-3 md:gap-5">
-        {project.gallery.map((image, i) => (
-          <Reveal key={image.src} delay={(i % 4) * 100}>
+        {project.gallery.map((image, i) => {
+          const photo = (
             <Image
               src={image.src}
               alt={`${project.title} — image ${i + 1}`}
@@ -61,8 +62,18 @@ export default async function ProjectPage({ params }: PageProps<"/portfolio/[slu
               preload={i === 0}
               className="h-auto w-full md:h-[70vh] md:w-auto"
             />
-          </Reveal>
-        ))}
+          );
+          // The cover morphs in from the grid tile, so it skips the scroll fade.
+          return i === 0 ? (
+            <ViewTransition key={image.src} name={`look-${project.slug}`} share="morph" default="none">
+              <div>{photo}</div>
+            </ViewTransition>
+          ) : (
+            <Reveal key={image.src} delay={(i % 4) * 100}>
+              {photo}
+            </Reveal>
+          );
+        })}
       </div>
 
       <nav

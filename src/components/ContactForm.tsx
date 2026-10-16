@@ -1,40 +1,68 @@
 "use client";
 
-import { useId } from "react";
+import { useActionState, useEffect, useId } from "react";
+import { sendContact, type ContactState } from "@/app/actions/contact";
 import { site } from "@/content/site";
 import { buttonClass } from "./ButtonLink";
 
 /**
- * Opens the visitor's email app with the message pre-filled — no backend needed.
- * Swap for a form service (Formspree, Resend, etc.) later if preferred.
+ * Contact form. Messages go through the sendContact server action (logged to a
+ * Google Sheet and emailed to Cheyenne). If that backend isn't configured, it
+ * falls back to opening the visitor's email app with the message filled in.
  *
  * - default: full form for the black Contact page.
  * - compact: shorter version for the white footer.
  */
 export default function ContactForm({ compact = false }: { compact?: boolean }) {
   const id = useId();
+  const [state, action, pending] = useActionState<ContactState, FormData>(sendContact, {
+    status: "idle",
+  });
+
+  useEffect(() => {
+    if (state.status !== "fallback") return;
+    const subject = `Inquiry from ${state.name}`;
+    const body = `${state.message}\n\n— ${state.name} (${state.email})`;
+    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(body)}`;
+  }, [state]);
+
+  if (state.status === "sent") {
+    return (
+      <p role="status" className={`text-lg font-bold ${compact ? "" : "md:text-2xl"}`}>
+        Thanks — your message is on its way. I&rsquo;ll get back to you soon.
+      </p>
+    );
+  }
+
   const field = compact
     ? "w-full border border-black bg-transparent px-3 font-normal text-black outline-none focus:border-2"
     : "w-full border border-white bg-transparent px-4 py-3 font-normal outline-none focus:border-2";
   const height = compact ? "h-11" : "h-14";
 
   return (
-    <form
-      className={`${compact ? "space-y-3" : "space-y-6"} text-[15px] font-bold`}
-      onSubmit={(e) => {
-        e.preventDefault();
-        const data = new FormData(e.currentTarget);
-        const subject = `Inquiry from ${data.get("name")}`;
-        const body = `${data.get("message")}\n\n— ${data.get("name")} (${data.get("email")})`;
-        window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-          subject,
-        )}&body=${encodeURIComponent(body)}`;
-      }}
-    >
+    <form action={action} className={`${compact ? "space-y-3" : "space-y-6"} text-[15px] font-bold`}>
+      <input type="hidden" name="page" value={compact ? "footer" : "contact page"} />
+      {/* Honeypot: hidden from people, tempting to bots. */}
+      <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+        <label>
+          Company
+          <input name="company" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
       <div className={`grid sm:grid-cols-2 ${compact ? "gap-3" : "gap-6"}`}>
         <label className="block" htmlFor={`${id}-name`}>
           Name *
-          <input id={`${id}-name`} name="name" required className={`mt-1.5 ${height} ${field}`} />
+          <input
+            id={`${id}-name`}
+            name="name"
+            required
+            maxLength={200}
+            autoComplete="name"
+            className={`mt-1.5 ${height} ${field}`}
+          />
         </label>
         <label className="block" htmlFor={`${id}-email`}>
           Email *
@@ -43,6 +71,8 @@ export default function ContactForm({ compact = false }: { compact?: boolean }) 
             name="email"
             type="email"
             required
+            maxLength={320}
+            autoComplete="email"
             className={`mt-1.5 ${height} ${field}`}
           />
         </label>
@@ -53,12 +83,27 @@ export default function ContactForm({ compact = false }: { compact?: boolean }) 
           id={`${id}-message`}
           name="message"
           required
+          maxLength={5000}
           rows={compact ? 3 : 6}
           className={`mt-1.5 resize-y ${compact ? "py-2" : ""} ${field}`}
         />
       </label>
-      <button type="submit" className={`${buttonClass(compact ? "dark" : "solid")} cursor-pointer`}>
-        Send
+
+      {state.status === "error" && (
+        <p role="alert" className="text-accent">
+          {state.message}{" "}
+          <a href={`mailto:${site.email}`} className="underline">
+            {site.email}
+          </a>
+        </p>
+      )}
+
+      <button
+        type="submit"
+        disabled={pending}
+        className={`${buttonClass(compact ? "dark" : "solid")} cursor-pointer disabled:cursor-wait disabled:opacity-60`}
+      >
+        {pending ? "Sending…" : "Send"}
       </button>
     </form>
   );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ViewTransition } from "react";
 import type { Project } from "@/content/projects";
 import SmartImage from "./SmartImage";
 
@@ -15,13 +16,16 @@ export default function ProjectTile({ project }: { project: Project }) {
         className={`relative overflow-hidden ${landscape ? "grid grid-cols-2 gap-2 md:gap-3" : ""}`}
       >
         <div aria-hidden className="aspect-[247/349]" />
-        <div className="absolute inset-0 transition-transform duration-700 ease-out-soft group-hover:scale-105 group-focus-visible:scale-105">
-          <SmartImage
-            src={project.cover?.src ?? null}
-            alt={project.title}
-            sizes={landscape ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}
-          />
-        </div>
+        {/* Shares a name with the project page's first photo, so it morphs into it. */}
+        <ViewTransition name={`look-${project.slug}`} share="morph" default="none">
+          <div className="absolute inset-0 transition-transform duration-700 ease-out-soft group-hover:scale-105 group-focus-visible:scale-105">
+            <SmartImage
+              src={project.cover?.src ?? null}
+              alt={project.title}
+              sizes={landscape ? "(min-width: 768px) 50vw, 100vw" : "(min-width: 768px) 25vw, 50vw"}
+            />
+          </div>
+        </ViewTransition>
         <div className="absolute inset-0 hidden items-center justify-center bg-black/55 p-4 text-center opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 [@media(hover:hover)]:flex">
           <div>
             <p className="text-xl font-bold tracking-tight text-white">{project.title}</p>

@@ -74,9 +74,28 @@ The shop has one product. Checkout works one of two ways; set one in Vercel's en
 - **Hosted checkout link** (no monthly fee): set `NEXT_PUBLIC_CHECKOUT_URL` to a Stripe Payment Link (or a Square or PayPal checkout link). The product's name, price, description and photo come from `site.shop.product` in `site.ts`.
 - **Shopify Buy Button** (Starter plan): set `NEXT_PUBLIC_SHOPIFY_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` and `NEXT_PUBLIC_SHOPIFY_PRODUCT_ID` from Shopify admin → Sales channels → Buy Button → embed code. Shopify's card shows its own product details and cart.
 
-## Contact
+## Contact form
 
-The Contact page and a compact form in the footer open the visitor's email app, addressed to `site.email`. No backend is involved.
+The Contact page form and the compact footer form post to a server action (`src/app/actions/contact.ts`). It forwards each message to a Google Apps Script web app, which **adds a row to a Google Sheet and emails the message to Cheyenne**, with Reply-To set to the sender. A hidden honeypot field drops bot submissions. Until `CONTACT_WEBHOOK_URL` is set, the form falls back to opening the visitor's email app.
+
+### One-time setup (in the thekellyorg Google account)
+
+1. Create a Google Sheet, e.g. "Website Messages".
+2. **Extensions → Apps Script**, then replace the editor's contents with `scripts/google-apps-script/Contact.gs` and save.
+3. **Project Settings (gear) → Script properties**, and add:
+   - `SECRET`: a long random string (`openssl rand -hex 24`)
+   - `NOTIFY_EMAIL`: `cdstudios111@gmail.com`
+4. **Deploy → New deployment → type: Web app**, with Execute as **Me** and Who has access **Anyone**. Authorize when prompted; on "Google hasn't verified this app", choose Advanced → Go to (project). Copy the **Web app URL**, which ends in `/exec`.
+5. In Vercel, set `CONTACT_WEBHOOK_URL` (that URL) and `CONTACT_WEBHOOK_SECRET` (the same SECRET), then redeploy.
+
+Gmail sends up to about 100 of these emails a day from a personal account. Every message is also kept in the Sheet. If you edit the script later, use **Deploy → Manage deployments → Edit → New version** so the URL stays the same.
+
+## Motion
+
+- **Hero intro** (home page load): each line rises out of a mask, the media frame wipes open, and the orchid blooms, then sways.
+- **Scroll**: the hero frame sinks, the orchid floats up, and the name drifts left. This uses CSS scroll timelines, and browsers without support just don't animate.
+- **Page transitions**: React `<ViewTransition>` crossfades pages, and a look's grid cover morphs into its project page.
+- Everything is off when the visitor's device asks for reduced motion.
 
 ## Deploy
 
