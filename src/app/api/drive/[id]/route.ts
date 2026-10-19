@@ -25,7 +25,7 @@ export async function GET(request: Request, { params }: RouteContext<"/api/drive
   }
 
   const headers = new Headers({
-    "Content-Type": upstream.headers.get("Content-Type") ?? "application/octet-stream",
+    "Content-Type": contentType(upstream.headers.get("Content-Type")),
     "Accept-Ranges": "bytes",
     // Browsers keep it a day; Vercel's CDN a week.
     "Cache-Control": "public, max-age=86400, s-maxage=604800",
@@ -44,4 +44,13 @@ async function isAllowed(id: string) {
   ]);
   if (looks?.looks?.some((look) => look.images.some((img) => img.id === id))) return true;
   return site?.site ? driveSiteFileIds(site.site).includes(id) : false;
+}
+
+/**
+ * iPhone .mov files are MP4 inside, but Chrome and Firefox won't play one that
+ * is labeled video/quicktime, so label it video/mp4.
+ */
+function contentType(type: string | null) {
+  if (!type) return "application/octet-stream";
+  return type.startsWith("video/quicktime") ? "video/mp4" : type;
 }

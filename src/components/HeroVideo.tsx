@@ -22,8 +22,16 @@ export default function HeroVideo({
   useEffect(() => {
     const el = video.current;
     if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    // Browsers may refuse autoplay (e.g. Low Power Mode); the button still works.
-    el.play().catch(() => {});
+    // Browsers only autoplay muted video. Set it as a property too: an uploaded
+    // video can have sound, and the attribute alone isn't always honored.
+    el.muted = true;
+    el.defaultMuted = true;
+    // Try now, and again once enough has loaded (a slow first load can make the
+    // early attempt fail). Low Power Mode may still refuse; the button works.
+    const start = () => el.play().catch(() => {});
+    start();
+    el.addEventListener("canplay", start, { once: true });
+    return () => el.removeEventListener("canplay", start);
   }, []);
 
   const toggle = () => {

@@ -13,23 +13,16 @@ function InstagramIcon() {
   );
 }
 
-/** White footer split by a vertical rule, as on the reference site. */
+/** White footer: name and links on top, the contact form across the full width. */
 export default function Footer() {
   return (
     <footer className="bg-white px-5 pt-6 text-black md:px-8">
-      <div className="grid border-b border-black md:grid-cols-2">
-        <div className="py-10 md:border-r md:border-black md:py-14 md:pl-2 md:pr-10">
+      <div className="border-b border-black py-10 md:px-2 md:py-14">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <Link href="/" className="text-4xl font-bold tracking-[-0.03em]">
             {site.name}
           </Link>
-          <h2 className="mt-12 text-3xl font-bold tracking-[-0.02em] md:mt-20">Get in Touch</h2>
-          <div className="mt-5 max-w-lg">
-            <ContactForm compact />
-          </div>
-        </div>
-
-        <div className="flex flex-col justify-end gap-10 border-t border-black py-10 md:flex-row md:items-end md:justify-around md:border-t-0 md:py-14">
-          <div className="text-[15px] font-bold">
+          <div className="text-[15px] font-bold md:text-right">
             <a
               href={site.instagram}
               target="_blank"
@@ -45,23 +38,29 @@ export default function Footer() {
               </a>
             </p>
           </div>
-          <ul className="space-y-1 text-[15px] font-bold underline underline-offset-2">
-            <li>
-              <Link href="/privacy" className="transition-colors hover:text-accent">
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link href="/accessibility" className="transition-colors hover:text-accent">
-                Accessibility Statement
-              </Link>
-            </li>
-          </ul>
+        </div>
+        <h2 className="mt-12 text-3xl font-bold tracking-[-0.02em] md:mt-16">Get in Touch</h2>
+        <div className="mt-5">
+          <ContactForm compact />
         </div>
       </div>
-      <p className="py-6 text-xs font-bold">
-        © <CurrentYear /> {site.name}
-      </p>
+      <div className="flex flex-col gap-3 py-6 text-xs font-bold md:flex-row md:items-center md:justify-between">
+        <p>
+          © <CurrentYear /> {site.name}
+        </p>
+        <ul className="flex gap-6 underline underline-offset-2">
+          <li>
+            <Link href="/privacy" className="transition-colors hover:text-accent">
+              Privacy Policy
+            </Link>
+          </li>
+          <li>
+            <Link href="/accessibility" className="transition-colors hover:text-accent">
+              Accessibility Statement
+            </Link>
+          </li>
+        </ul>
+      </div>
     </footer>
   );
 }
