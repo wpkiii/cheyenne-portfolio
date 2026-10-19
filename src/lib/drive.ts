@@ -190,9 +190,10 @@ async function loadDriveLooks(): Promise<DriveLook[]> {
  *
  *   Website/
  *     About/          first image = About photo
- *                     Google Doc "About"      = full bio, one paragraph per line
+ *                     any Google Doc          = full bio, one paragraph per line
  *                     Google Doc "Home Intro" = the home page's short intro
  *     Home Video/     first video = hero video; first image (optional) = poster
+ *                     (the "Home Intro" Doc can live here instead)
  *
  * Anything missing falls back to the bundled copy in src/content/site.ts.
  */
@@ -252,9 +253,11 @@ async function loadDriveSite(): Promise<DriveSite> {
   const photo = aboutFiles.find((f) => IMAGE_MIMES.has(f.mimeType));
   if (photo) site.aboutImage = toImage(photo);
 
-  const texts = aboutFiles.filter((f) => f.mimeType === DOC_MIME || f.mimeType === "text/plain");
-  const introDoc = texts.find((f) => /home|intro/i.test(f.name));
-  const aboutDoc = texts.find((f) => f !== introDoc);
+  // The home intro Doc may sit in either folder (it's home page content too).
+  const isText = (f: DriveFile) => f.mimeType === DOC_MIME || f.mimeType === "text/plain";
+  const isIntro = (f: DriveFile) => /home|intro/i.test(f.name);
+  const introDoc = [...aboutFiles, ...videoFiles].find((f) => isText(f) && isIntro(f));
+  const aboutDoc = aboutFiles.find((f) => isText(f) && !isIntro(f));
   const [aboutText, homeIntro] = await Promise.all([
     aboutDoc ? readText(cfg.apiKey, aboutDoc) : undefined,
     introDoc ? readText(cfg.apiKey, introDoc) : undefined,

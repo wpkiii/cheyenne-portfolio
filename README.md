@@ -55,8 +55,8 @@ Cheyenne can change the About photo, the bio, the home page intro and the hero v
 Website/                  ← shared: Anyone with the link → Viewer
   About/
     photo.jpg             ← first image (by name) = About photo
-    About                 ← Google Doc: the full bio, one paragraph per line
-    Home Intro            ← Google Doc: the short intro on the home page
+    About Me              ← Google Doc (any name without "Home"/"Intro"): the full bio, one paragraph per line
+    Home Intro            ← Google Doc: the short intro on the home page (here or in Home Video/)
   Home Video/
     video.mp4             ← first video = the hero video (sets the frame's shape)
     poster.jpg            ← optional: shown while the video loads
