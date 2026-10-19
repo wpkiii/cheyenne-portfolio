@@ -21,17 +21,31 @@ export default function HeroVideo({
 
   useEffect(() => {
     const el = video.current;
-    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!el) return;
+    // The autoPlay attribute starts it before this code even loads; visitors who
+    // ask for reduced motion get it paused instead.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.pause();
+      return;
+    }
     // Browsers only autoplay muted video. Set it as a property too: an uploaded
     // video can have sound, and the attribute alone isn't always honored.
     el.muted = true;
     el.defaultMuted = true;
-    // Try now, and again once enough has loaded (a slow first load can make the
-    // early attempt fail). Low Power Mode may still refuse; the button works.
-    const start = () => el.play().catch(() => {});
+    const start = () => {
+      if (el.paused) el.play().catch(() => {});
+    };
     start();
-    el.addEventListener("canplay", start, { once: true });
-    return () => el.removeEventListener("canplay", start);
+    // Retry once enough has loaded, and on the first touch or scroll: iPhones in
+    // Low Power Mode refuse autoplay but allow play after any interaction.
+    const events = ["canplay", "loadeddata"] as const;
+    const gestures = ["touchstart", "pointerdown", "scroll", "keydown"] as const;
+    events.forEach((e) => el.addEventListener(e, start, { once: true }));
+    gestures.forEach((e) => window.addEventListener(e, start, { once: true, passive: true }));
+    return () => {
+      events.forEach((e) => el.removeEventListener(e, start));
+      gestures.forEach((e) => window.removeEventListener(e, start));
+    };
   }, []);
 
   const toggle = () => {
@@ -45,9 +59,10 @@ export default function HeroVideo({
     <>
       <video
         ref={video}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="hero-video absolute inset-0 h-full w-full object-cover"
         src={src}
         poster={poster ?? undefined}
+        autoPlay
         muted
         loop
         playsInline

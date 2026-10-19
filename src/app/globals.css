@@ -194,6 +194,14 @@ a:focus-visible > .nav-mark,
   }
 }
 
+/* iPhones draw a big play button over a video that hasn't started yet (e.g. in
+   Low Power Mode); hide it so the hero shows its first frame instead. */
+.hero-video::-webkit-media-controls-start-playback-button,
+.hero-video::-webkit-media-controls {
+  display: none !important;
+  -webkit-appearance: none;
+}
+
 /* Scroll-entrance animation used by <Reveal>. */
 .reveal {
   opacity: 0;
