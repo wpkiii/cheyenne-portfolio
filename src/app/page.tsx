@@ -1,6 +1,5 @@
 import AboutTeaser from "@/components/AboutTeaser";
 import ButtonLink from "@/components/ButtonLink";
-import ContactCTA from "@/components/ContactCTA";
 import Hero from "@/components/Hero";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import Reveal from "@/components/Reveal";
@@ -33,7 +32,6 @@ export default async function Home() {
         paragraphs={about.intro}
         button={{ href: "/about", label: `More About ${site.firstName}` }}
       />
-      <ContactCTA />
     </>
   );
 }

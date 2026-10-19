@@ -65,7 +65,7 @@ Website/                  ← shared: Anyone with the link → Viewer
 - Anything missing (or the whole folder) falls back to the bundled copy in `site.ts`, `public/images/about/` and `public/videos/`.
 - **Video**: MP4 (H.264), ideally under 20 MB and 5–15 seconds; it plays muted on a loop. iPhones record HEVC by default, which some browsers can't play: set **Settings → Camera → Formats → Most Compatible**, or export/share as "Most Compatible".
 - **Photos**: JPG/PNG, not HEIC (same as the looks).
-- Changes show up within about 5 minutes, or immediately via `/api/revalidate?secret=<REVALIDATE_SECRET>`.
+- Changes show up within about 20 minutes (Drive is checked every 5, pages refresh every 15), or immediately via `/api/revalidate?secret=<REVALIDATE_SECRET>`.
 
 ### Adding photos
 

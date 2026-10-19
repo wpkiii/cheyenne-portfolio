@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import AboutTeaser from "@/components/AboutTeaser";
-import ContactCTA from "@/components/ContactCTA";
 import { site } from "@/content/site";
 import { getAbout } from "@/content/siteContent";
 
@@ -16,7 +15,6 @@ export default async function AboutPage() {
         paragraphs={about.bio}
         button={{ href: "/portfolio", label: `${site.firstName}’s Work` }}
       />
-      <ContactCTA />
     </>
   );
 }
