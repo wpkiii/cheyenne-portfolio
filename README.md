@@ -99,7 +99,7 @@ The shop has one product. Checkout works one of two ways; set one in Vercel's en
 
 1. Cheyenne signs up at dashboard.stripe.com/register with her own email and turns on two-step login.
 2. **Activate payments**: Individual/sole proprietor, her legal details and bank account; website = the site's URL; statement descriptor e.g. `CHEYENNE DANIELS`.
-3. **Product catalog → Add product**: name, description, photo, one-time price $55.00 USD.
+3. **Product catalog → Add product**: name, description, photo, one-time price $32.00 USD.
 4. **Product catalog → Shipping rates**: e.g. "Standard", the price, 5–7 business days.
 5. **Payment Links → New**: pick the product, turn on **Collect shipping addresses** (United States) and add the shipping rate; under **After payment**, redirect to `<site>/shop/thanks`.
 6. **Settings → Customer emails**: turn on successful-payment receipts.

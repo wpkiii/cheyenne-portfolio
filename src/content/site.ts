@@ -67,16 +67,14 @@ export const site = {
     checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://buy.stripe.com/5kQ8wPfTI4MB8rX7lPbjW00",
     product: {
       title: "GHOE100 Magazine",
-      price: "$55.00",
+      price: "$32.00",
       description:
         "Editorial magazine celebrating the Centennial of the Greatest Homecoming on Earth at North Carolina Agricultural and Technical State University.",
       image: "/images/shop/product.png" as string | null,
     },
-    // Shown on /shop and the post-checkout thank-you page. Placeholders until
-    // Cheyenne confirms them; Stripe's review looks for these on the site.
+    // Shown on /shop and the post-checkout thank-you page.
     policies: {
       shipping: "Orders ship within 5–7 business days within the United States. You'll get an email when your order is on its way.",
-      returns: "Unworn items in original condition can be returned within 14 days of delivery. Email us to start a return.",
     },
   },
 } as const;

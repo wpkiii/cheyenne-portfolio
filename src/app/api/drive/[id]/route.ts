@@ -11,17 +11,20 @@ import {
  * Streams a photo or video from the site's Google Drive folders (the looks and
  * the "Website" folder). Only files the site actually shows are served, so this
  * can't be used to fetch arbitrary Drive files with the site's API key.
- * next/image resizes and caches photos; videos are streamed in byte ranges,
- * which Safari needs to play them.
+ * next/image resizes and caches photos.
+ *
+ * Always answers with the whole file, never a byte range: Vercel's CDN only
+ * caches whole responses, and once it has one it answers the browser's range
+ * requests itself (Safari needs those to play video). So after the first
+ * visitor, the hero video comes straight from the CDN instead of from Drive.
  */
-export async function GET(request: Request, { params }: RouteContext<"/api/drive/[id]">) {
+export async function GET(_request: Request, { params }: RouteContext<"/api/drive/[id]">) {
   const { id } = await params;
   if (!(await isAllowed(id))) return new Response("Not found", { status: 404 });
 
-  const range = request.headers.get("range");
-  const upstream = await fetch(driveMediaUrl(id), range ? { headers: { range } } : undefined);
+  const upstream = await fetch(driveMediaUrl(id));
   if (!upstream.ok || !upstream.body) {
-    return new Response("Media unavailable", { status: upstream.status === 416 ? 416 : 502 });
+    return new Response("Media unavailable", { status: 502 });
   }
 
   const headers = new Headers({
@@ -30,11 +33,9 @@ export async function GET(request: Request, { params }: RouteContext<"/api/drive
     // Browsers keep it a day; Vercel's CDN a week.
     "Cache-Control": "public, max-age=86400, s-maxage=604800",
   });
-  for (const name of ["Content-Length", "Content-Range"]) {
-    const value = upstream.headers.get(name);
-    if (value) headers.set(name, value);
-  }
-  return new Response(upstream.body, { status: upstream.status, headers });
+  const length = upstream.headers.get("Content-Length");
+  if (length) headers.set("Content-Length", length);
+  return new Response(upstream.body, { headers });
 }
 
 async function isAllowed(id: string) {
