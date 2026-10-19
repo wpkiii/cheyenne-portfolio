@@ -63,7 +63,8 @@ export const site = {
       storefrontAccessToken: process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN ?? "",
       productId: process.env.NEXT_PUBLIC_SHOPIFY_PRODUCT_ID ?? "",
     },
-    checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL ?? "",
+    // Cheyenne's Stripe Payment Link; NEXT_PUBLIC_CHECKOUT_URL overrides it.
+    checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://buy.stripe.com/5kQ8wPfTI4MB8rX7lPbjW00",
     product: {
       title: "Product Name",
       price: "$55.00",
