@@ -68,7 +68,8 @@ export const site = {
     product: {
       title: "GHOE100 Magazine",
       price: "$55.00",
-      description: "A short description of the product will go here.",
+      description:
+        "Editorial magazine celebrating the Centennial of the Greatest Homecoming on Earth at North Carolina Agricultural and Technical State University.",
       image: "/images/shop/product.png" as string | null,
     },
     // Shown on /shop and the post-checkout thank-you page. Placeholders until
