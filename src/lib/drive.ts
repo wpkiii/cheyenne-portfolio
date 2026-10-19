@@ -33,6 +33,7 @@ type DriveFile = {
   name: string;
   mimeType: string;
   imageMediaMetadata?: { width?: number; height?: number; rotation?: number };
+  videoMediaMetadata?: { width?: number; height?: number };
 };
 
 /**
@@ -45,19 +46,25 @@ function parseFolderId(value: string) {
   return cleaned.match(/folders\/([\w-]+)/)?.[1] ?? cleaned.match(/[?&]id=([\w-]+)/)?.[1] ?? cleaned;
 }
 
-function config() {
+function config(folderVar = "GOOGLE_DRIVE_FOLDER_ID") {
   const apiKey = process.env.GOOGLE_DRIVE_API_KEY?.trim();
-  const folderId = parseFolderId(process.env.GOOGLE_DRIVE_FOLDER_ID ?? "");
+  const folderId = parseFolderId(process.env[folderVar] ?? "");
   return apiKey && folderId ? { apiKey, folderId } : null;
 }
+
+const siteConfig = () => config("GOOGLE_DRIVE_SITE_FOLDER_ID");
 
 export function isDriveConfigured() {
   return config() !== null;
 }
 
+export function isDriveSiteConfigured() {
+  return siteConfig() !== null;
+}
+
 /** URL that streams a Drive file's bytes (used only by the image proxy route). */
 export function driveMediaUrl(fileId: string) {
-  const cfg = config();
+  const cfg = config() ?? siteConfig();
   if (!cfg) throw new Error("Google Drive is not configured");
   return `${API}/${encodeURIComponent(fileId)}?alt=media&supportsAllDrives=true&key=${cfg.apiKey}`;
 }
@@ -69,7 +76,7 @@ async function listChildren(apiKey: string, parentId: string): Promise<DriveFile
     const params = new URLSearchParams({
       q: `'${parentId}' in parents and trashed = false`,
       fields:
-        "nextPageToken, files(id, name, mimeType, imageMediaMetadata(width, height, rotation))",
+        "nextPageToken, files(id, name, mimeType, imageMediaMetadata(width, height, rotation), videoMediaMetadata(width, height))",
       pageSize: "1000",
       supportsAllDrives: "true",
       includeItemsFromAllDrives: "true",
@@ -92,6 +99,18 @@ async function listChildren(apiKey: string, parentId: string): Promise<DriveFile
     pageToken = body.nextPageToken;
   } while (pageToken);
   return files;
+}
+
+function toImage(f: DriveFile): DriveImage {
+  const { width = 1200, height = 1600, rotation = 0 } = f.imageMediaMetadata ?? {};
+  const turned = rotation % 2 === 1;
+  return {
+    id: f.id,
+    name: f.name,
+    src: `/api/drive/${f.id}`,
+    width: turned ? height : width,
+    height: turned ? width : height,
+  };
 }
 
 const byName = (a: { name: string }, b: { name: string }) =>
@@ -149,17 +168,7 @@ async function loadDriveLooks(): Promise<DriveLook[]> {
       const images = (await listChildren(cfg.apiKey, folder.id))
         .filter((f) => IMAGE_MIMES.has(f.mimeType))
         .sort(byName)
-        .map((f): DriveImage => {
-          const { width = 1200, height = 1600, rotation = 0 } = f.imageMediaMetadata ?? {};
-          const turned = rotation % 2 === 1;
-          return {
-            id: f.id,
-            name: f.name,
-            src: `/api/drive/${f.id}`,
-            width: turned ? height : width,
-            height: turned ? width : height,
-          };
-        });
+        .map(toImage);
       return { folder, images };
     }),
   );
@@ -173,4 +182,108 @@ async function loadDriveLooks(): Promise<DriveLook[]> {
       used.add(slug);
       return { slug, title, images };
     });
+}
+
+/*
+ * The "Website" folder: the About photo and text and the home page video, so
+ * Cheyenne can change them without a developer. Shared like the looks folder.
+ *
+ *   Website/
+ *     About/          first image = About photo
+ *                     Google Doc "About"      = full bio, one paragraph per line
+ *                     Google Doc "Home Intro" = the home page's short intro
+ *     Home Video/     first video = hero video; first image (optional) = poster
+ *
+ * Anything missing falls back to the bundled copy in src/content/site.ts.
+ */
+
+const DOC_MIME = "application/vnd.google-apps.document";
+const VIDEO_MIMES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
+
+export type DriveVideo = { id: string; src: string; width: number; height: number };
+export type DriveSite = {
+  aboutImage?: DriveImage;
+  aboutText?: string[];
+  homeIntro?: string[];
+  video?: DriveVideo;
+  poster?: DriveImage;
+};
+export type DriveSiteResult = { site: DriveSite; error?: never } | { site?: never; error: string };
+
+/** The Website folder's content. Cached with the looks; errors come back as values. */
+export async function getDriveSite(): Promise<DriveSiteResult> {
+  "use cache";
+  cacheTag(DRIVE_TAG);
+  try {
+    const site = await loadDriveSite();
+    cacheLife({ stale: 300, revalidate: 300, expire: 60 * 60 * 24 * 30 });
+    return { site };
+  } catch (err) {
+    cacheLife({ stale: 60, revalidate: 60, expire: 300 });
+    return { error: (err as Error).message };
+  }
+}
+
+/** Ids of the Website files the image/video route may serve. */
+export function driveSiteFileIds(site: DriveSite) {
+  return [site.aboutImage?.id, site.video?.id, site.poster?.id].filter(Boolean) as string[];
+}
+
+async function loadDriveSite(): Promise<DriveSite> {
+  const cfg = siteConfig();
+  if (!cfg) return {};
+
+  const folders = (await listChildren(cfg.apiKey, cfg.folderId)).filter(
+    (f) => f.mimeType === FOLDER_MIME,
+  );
+  const find = (pattern: RegExp) => folders.find((f) => pattern.test(f.name));
+  const aboutFolder = find(/about/i);
+  const videoFolder = find(/video|hero/i);
+
+  const [aboutFiles, videoFiles] = await Promise.all([
+    aboutFolder ? listChildren(cfg.apiKey, aboutFolder.id) : [],
+    videoFolder ? listChildren(cfg.apiKey, videoFolder.id) : [],
+  ]);
+  aboutFiles.sort(byName);
+  videoFiles.sort(byName);
+
+  const site: DriveSite = {};
+
+  const photo = aboutFiles.find((f) => IMAGE_MIMES.has(f.mimeType));
+  if (photo) site.aboutImage = toImage(photo);
+
+  const texts = aboutFiles.filter((f) => f.mimeType === DOC_MIME || f.mimeType === "text/plain");
+  const introDoc = texts.find((f) => /home|intro/i.test(f.name));
+  const aboutDoc = texts.find((f) => f !== introDoc);
+  const [aboutText, homeIntro] = await Promise.all([
+    aboutDoc ? readText(cfg.apiKey, aboutDoc) : undefined,
+    introDoc ? readText(cfg.apiKey, introDoc) : undefined,
+  ]);
+  if (aboutText?.length) site.aboutText = aboutText;
+  if (homeIntro?.length) site.homeIntro = homeIntro;
+
+  const video = videoFiles.find((f) => VIDEO_MIMES.has(f.mimeType));
+  if (video) {
+    // Drive fills in a video's size a little after upload; assume 16:9 until then.
+    const { width = 1920, height = 1080 } = video.videoMediaMetadata ?? {};
+    site.video = { id: video.id, src: `/api/drive/${video.id}`, width, height };
+    const poster = videoFiles.find((f) => IMAGE_MIMES.has(f.mimeType));
+    if (poster) site.poster = toImage(poster);
+  }
+  return site;
+}
+
+/** A Google Doc's (or .txt file's) text, as paragraphs. */
+async function readText(apiKey: string, file: DriveFile): Promise<string[]> {
+  const url =
+    file.mimeType === DOC_MIME
+      ? `${API}/${encodeURIComponent(file.id)}/export?mimeType=text/plain&key=${apiKey}`
+      : `${API}/${encodeURIComponent(file.id)}?alt=media&supportsAllDrives=true&key=${apiKey}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Google Drive couldn't read "${file.name}" (${res.status})`);
+  return (await res.text())
+    .replace(/^\uFEFF/, "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 }

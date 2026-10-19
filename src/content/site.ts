@@ -7,7 +7,7 @@ export const site = {
   firstName: "Cheyenne",
   // Shown in the hero and page metadata.
   roles: ["Stylist", "Creative Director"],
-  tagline: "Styling and creative direction.",
+  tagline: "Fashion stylist from Washington, DC, based in the DMV and New York City.",
   email: "cdstudios111@gmail.com",
   instagram: "https://www.instagram.com/cchey.ennee/",
   instagramHandle: "@cchey.ennee",
@@ -23,22 +23,28 @@ export const site = {
       : "http://localhost:3000"),
 
   hero: {
-    // Center media. A video (muted, looping) wins over the image; the image is
-    // also used as the video's poster frame. Files go in public/, e.g.
-    // video: "/videos/hero.mp4", image: "/images/hero.jpg".
-    video: null as string | null,
+    // Center media. A video (muted, looping) wins over the image; the poster is
+    // shown while the video loads. width/height set the frame's shape. These are
+    // the fallback — the "Website" Drive folder overrides them (src/lib/drive.ts).
+    video: "/videos/hero.mp4" as string | null,
+    poster: "/videos/hero-poster.jpg" as string | null,
     image: null as string | null,
+    width: 960,
+    height: 700,
   },
 
   about: {
-    image: null as string | null, // e.g. "/images/about-portrait.jpg"
+    // Fallback copy and photo; the "Website" Drive folder overrides them.
+    image: "/images/about/cheyenne.jpg" as string | null,
     heading: "Stylist Overview",
-    short:
-      "Cheyenne is a stylist and creative director. A short introduction about her work, clients and point of view will go here.",
+    /** Home page intro. */
+    intro:
+      "I am a fashion stylist from Washington, DC, based in DMV/NYC areas. I create looks that have modern, timeless foundations, but with details that introduce complexity and elevation. I love looks that create a feeling, but are versatile across passing trends and fads.",
+    /** Full bio on the About page. */
     long: [
-      "A longer biography will go here — background, training, and how she approaches styling and creative direction.",
-      "A second paragraph can cover notable clients, publications, events and collaborations.",
-      "A closing paragraph about what she is working on next.",
+      "I am a fashion stylist from Washington, DC, based in DMV/NYC areas. I create looks that have modern, timeless foundations, but with details that introduce complexity and elevation. I love looks that create a feeling, but are versatile across passing trends and fads.",
+      "I started pursuing my passion with a career in styling during my sophomore year of college at North Carolina A&T, right from my dorm room. My experience consists of editorial styling for brands and individuals, wardrobe, and celebrity styling. Recently, I worked on building looks for celebrity clients during NYFW with celebrity stylist, Kalyn Rodriguez and WNBA stylist, Amadi Brooks.",
+      "I credit my stylistic choices to my diverse experiences. Living in a very small town with not many people who looked like me, I was always pushing the limits of what was socially acceptable to wear. Moving away from home for college and completely redefining myself at an HBCU, developed ambition and audacity in my perspective. Working with the NBA and experiencing athletic fashion on a global level, introduced aspects of versatility, functionality, and cohesiveness within how I style. I aim to create looks that are timeless, but complex enough to transcend what is considered normal or expected.",
     ],
   },
 
@@ -63,6 +69,12 @@ export const site = {
       price: "$55.00",
       description: "A short description of the product will go here.",
       image: null as string | null, // e.g. "/images/shop/product.jpg"
+    },
+    // Shown on /shop and the post-checkout thank-you page. Placeholders until
+    // Cheyenne confirms them; Stripe's review looks for these on the site.
+    policies: {
+      shipping: "Orders ship within 5–7 business days within the United States. You'll get an email when your order is on its way.",
+      returns: "Unworn items in original condition can be returned within 14 days of delivery. Email us to start a return.",
     },
   },
 } as const;

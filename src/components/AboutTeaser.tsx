@@ -6,13 +6,18 @@ import SmartImage from "./SmartImage";
 /**
  * Reference layout: big "About" title, portrait on the left, and the bio
  * starting just inside the portrait's right edge so the text overlaps it.
+ * The home page passes the short intro, the About page the full bio.
  */
 export default function AboutTeaser({
   as: Title = "h2",
-  showWorkButton = true,
+  image,
+  paragraphs,
+  button,
 }: {
   as?: "h1" | "h2";
-  showWorkButton?: boolean;
+  image: string | null;
+  paragraphs: string[];
+  button?: { href: string; label: string };
 }) {
   return (
     <section className="px-5 py-20 md:px-10 md:py-[7vw]">
@@ -25,9 +30,10 @@ export default function AboutTeaser({
       <div className="mt-10 md:mt-[4vw] md:grid md:grid-cols-[41.7vw_1fr] md:items-start">
         <Reveal className="relative aspect-square w-full overflow-hidden">
           <SmartImage
-            src={site.about.image}
+            src={image}
             alt={`Portrait of ${site.name}`}
             sizes="(min-width: 768px) 42vw, 100vw"
+            className="object-[60%_50%]"
           />
         </Reveal>
 
@@ -37,13 +43,13 @@ export default function AboutTeaser({
         >
           <h3 className="text-[15px] font-bold">{site.about.heading}</h3>
           <div className="mt-8 space-y-7 text-lg font-bold leading-snug md:pl-[0.35vw] md:text-[1.35vw]">
-            {site.about.long.map((p, i) => (
+            {paragraphs.map((p, i) => (
               <p key={i}>{p}</p>
             ))}
           </div>
-          {showWorkButton && (
+          {button && (
             <div className="mt-12">
-              <ButtonLink href="/portfolio">{site.firstName}&rsquo;s Work</ButtonLink>
+              <ButtonLink href={button.href}>{button.label}</ButtonLink>
             </div>
           )}
         </Reveal>

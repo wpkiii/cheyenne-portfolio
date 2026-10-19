@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 import { site } from "@/content/site";
+import { getHeroMedia, type HeroMedia as Media } from "@/content/siteContent";
+import HeroVideo from "./HeroVideo";
 import SmartImage from "./SmartImage";
 
 /*
@@ -25,33 +27,23 @@ function RiseLine({ children, delay }: { children: ReactNode; delay: number }) {
   );
 }
 
-function HeroMedia() {
-  const { video, image } = site.hero;
-  if (video) {
-    return (
-      <video
-        className="absolute inset-0 h-full w-full object-cover"
-        src={video}
-        poster={image ?? undefined}
-        autoPlay
-        muted
-        loop
-        playsInline
-        aria-label={`${site.name} — featured work`}
-      />
-    );
-  }
+function HeroMedia({ media }: { media: Media }) {
+  const label = `${site.name} — featured work`;
+  if (media.video) return <HeroVideo src={media.video} poster={media.image} label={label} />;
   return (
-    <SmartImage
-      src={image}
-      alt={`${site.name} — featured work`}
-      sizes="(min-width: 768px) 60vw, 100vw"
-      preload
-    />
+    <SmartImage src={media.image} alt={label} sizes="(min-width: 768px) 60vw, 100vw" preload />
   );
 }
 
-export default function Hero() {
+/** A video sets the frame's shape (within 1:1 to 2.1:1), so nothing is cropped. */
+function frameRatio(media: Media) {
+  if (!media.video || !media.width || !media.height) return undefined;
+  return Math.min(Math.max(media.width / media.height, 1), 2.1);
+}
+
+export default async function Hero() {
+  const media = await getHeroMedia();
+  const ratio = frameRatio(media);
   const [left, right = left] = site.roles;
   const [rightTop, ...rightRest] = right.split(" ");
 
@@ -61,17 +53,23 @@ export default function Hero() {
         {site.name} — {site.roles.join(", ")}
       </h1>
 
-      <div aria-hidden className="relative">
+      <div className="relative">
         <p
+          aria-hidden
           className={`${label} px-5 text-5xl md:absolute md:left-5 md:top-1/2 md:-translate-y-1/2 md:px-0 md:text-[3.55vw]`}
         >
           <RiseLine delay={500}>{left}</RiseLine>
         </p>
 
         {/* Outer wrapper sinks on scroll; inner frame wipes open on load. */}
-        <div className="scroll-parallax relative mx-5 mt-6 aspect-[4/3] md:mx-auto md:mt-0 md:aspect-[856/423] md:w-[59.45vw]">
+        <div
+          className={`scroll-parallax relative mx-5 mt-6 md:mx-auto md:mt-0 md:w-[59.45vw] ${
+            ratio ? "" : "aspect-[4/3] md:aspect-[856/423]"
+          }`}
+          style={ratio ? { aspectRatio: ratio } : undefined}
+        >
           <div className="intro-wipe absolute inset-0 overflow-hidden">
-            <HeroMedia />
+            <HeroMedia media={media} />
           </div>
           {/* The orchid from Cheyenne's previous site, pinned over the frame's top-right corner. */}
           <div className="scroll-float pointer-events-none absolute -right-8 -top-12 z-10 w-36 md:-right-[5.5vw] md:-top-[6vw] md:w-[12.5vw]">
@@ -88,6 +86,7 @@ export default function Hero() {
 
         {/* Deliberately overflows the right edge, like the reference. */}
         <p
+          aria-hidden
           className={`${label} mt-6 whitespace-nowrap pl-[42vw] text-center text-5xl md:absolute md:left-[84.1vw] md:top-1/2 md:mt-0 md:-translate-y-1/2 md:pl-0 md:text-[3.55vw]`}
         >
           <RiseLine delay={600}>{rightTop}</RiseLine>

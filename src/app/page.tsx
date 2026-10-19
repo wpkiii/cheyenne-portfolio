@@ -5,9 +5,11 @@ import Hero from "@/components/Hero";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import Reveal from "@/components/Reveal";
 import { getFeaturedProjects } from "@/content/projects";
+import { site } from "@/content/site";
+import { getAbout } from "@/content/siteContent";
 
 export default async function Home() {
-  const featuredProjects = await getFeaturedProjects();
+  const [featuredProjects, about] = await Promise.all([getFeaturedProjects(), getAbout()]);
   return (
     <>
       <Hero />
@@ -26,7 +28,11 @@ export default async function Home() {
           <ButtonLink href="/portfolio">View All Work</ButtonLink>
         </Reveal>
       </section>
-      <AboutTeaser />
+      <AboutTeaser
+        image={about.image}
+        paragraphs={about.intro}
+        button={{ href: "/about", label: `More About ${site.firstName}` }}
+      />
       <ContactCTA />
     </>
   );

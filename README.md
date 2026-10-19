@@ -17,7 +17,8 @@ Copy and settings live in a few files, and portfolio photos can come from Google
 
 | File | Controls |
 |---|---|
-| `src/content/site.ts` | Name, roles, bio, email, Instagram, hero/about images, shop product |
+| `src/content/site.ts` | Name, roles, email, Instagram, shop product and policies; fallback bio, About photo and hero video |
+| `src/content/siteContent.ts` | About + hero content: the Drive "Website" folder, else `site.ts` |
 | `src/content/projects.ts` | How looks become projects; which bundled looks are featured on the home page |
 | `src/content/looks.ts` | Bundled image list (with pixel sizes), used when Google Drive isn't connected |
 | `src/lib/drive.ts` | Google Drive integration |
@@ -46,11 +47,31 @@ Portfolio Looks/          ← shared: Anyone with the link → Viewer
 2. In Google Drive, create the `Portfolio Looks` folder, upload the look folders (the current 24 are in `public/images/projects/`), and set **Share → General access → Anyone with the link → Viewer**.
 3. In Vercel → Settings → Environment Variables, set `GOOGLE_DRIVE_API_KEY`, `GOOGLE_DRIVE_FOLDER_ID` (the last part of the folder's URL) and `REVALIDATE_SECRET`, then redeploy.
 
+## About page and home video from Google Drive
+
+Cheyenne can change the About photo, the bio, the home page intro and the hero video herself, from a second shared folder (set `GOOGLE_DRIVE_SITE_FOLDER_ID`; the same API key is used):
+
+```
+Website/                  ← shared: Anyone with the link → Viewer
+  About/
+    photo.jpg             ← first image (by name) = About photo
+    About                 ← Google Doc: the full bio, one paragraph per line
+    Home Intro            ← Google Doc: the short intro on the home page
+  Home Video/
+    video.mp4             ← first video = the hero video (sets the frame's shape)
+    poster.jpg            ← optional: shown while the video loads
+```
+
+- Anything missing (or the whole folder) falls back to the bundled copy in `site.ts`, `public/images/about/` and `public/videos/`.
+- **Video**: MP4 (H.264), ideally under 20 MB and 5–15 seconds; it plays muted on a loop. iPhones record HEVC by default, which some browsers can't play: set **Settings → Camera → Formats → Most Compatible**, or export/share as "Most Compatible".
+- **Photos**: JPG/PNG, not HEIC (same as the looks).
+- Changes show up within about 5 minutes, or immediately via `/api/revalidate?secret=<REVALIDATE_SECRET>`.
+
 ### Adding photos
 
 - **Portfolio looks**: add these through Google Drive (above). The bundled fallback folders `public/images/projects/look-01/` … `look-24/` hold the images from Cheyenne's old Canva site, at roughly 600×800px.
-- **Hero**: `public/images/hero.jpg` or a video at `public/videos/hero.mp4`, set in `site.hero`.
-- **About portrait**: `public/images/about-portrait.jpg`, set in `site.about.image`.
+- **Hero** (fallback): `public/videos/hero.mp4` + `hero-poster.jpg`, set in `site.hero` with the video's pixel size.
+- **About portrait** (fallback): `public/images/about/cheyenne.jpg`, set in `site.about.image`.
 - **Brand**: the orchid lives at `public/images/brand/orchid.png`.
 
 `next/image` handles resizing and serves WebP/AVIF.
@@ -71,8 +92,18 @@ Modeled on the reference site: a black canvas with heavy white Helvetica, and a 
 
 The shop has one product. Checkout works one of two ways; set one in Vercel's environment variables (see `.env.example`) and redeploy. With neither set, `/shop` shows "Coming soon".
 
-- **Hosted checkout link** (no monthly fee): set `NEXT_PUBLIC_CHECKOUT_URL` to a Stripe Payment Link (or a Square or PayPal checkout link). The product's name, price, description and photo come from `site.shop.product` in `site.ts`.
+- **Hosted checkout link** (no monthly fee): set `NEXT_PUBLIC_CHECKOUT_URL` to a Stripe Payment Link (or a Square or PayPal checkout link). The product's name, price, description and photo come from `site.shop.product` in `site.ts`; the Shipping and Returns text on `/shop` from `site.shop.policies`. Set the link's after-payment redirect to `/shop/thanks`. `NEXT_PUBLIC_*` values are baked in at build time, so redeploy after changing it.
 - **Shopify Buy Button** (Starter plan): set `NEXT_PUBLIC_SHOPIFY_DOMAIN`, `NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN` and `NEXT_PUBLIC_SHOPIFY_PRODUCT_ID` from Shopify admin → Sales channels → Buy Button → embed code. Shopify's card shows its own product details and cart.
+
+### Stripe setup (Payment Link)
+
+1. Cheyenne signs up at dashboard.stripe.com/register with her own email and turns on two-step login.
+2. **Activate payments**: Individual/sole proprietor, her legal details and bank account; website = the site's URL; statement descriptor e.g. `CHEYENNE DANIELS`.
+3. **Product catalog → Add product**: name, description, photo, one-time price $55.00 USD.
+4. **Product catalog → Shipping rates**: e.g. "Standard", the price, 5–7 business days.
+5. **Payment Links → New**: pick the product, turn on **Collect shipping addresses** (United States) and add the shipping rate; under **After payment**, redirect to `<site>/shop/thanks`.
+6. **Settings → Customer emails**: turn on successful-payment receipts.
+7. Test the same link in Test mode with card `4242 4242 4242 4242`, then put the **live** link in Vercel as `NEXT_PUBLIC_CHECKOUT_URL` and redeploy.
 
 ## Contact form
 
