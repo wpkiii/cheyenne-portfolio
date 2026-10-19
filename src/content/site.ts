@@ -66,10 +66,10 @@ export const site = {
     // Cheyenne's Stripe Payment Link; NEXT_PUBLIC_CHECKOUT_URL overrides it.
     checkoutUrl: process.env.NEXT_PUBLIC_CHECKOUT_URL || "https://buy.stripe.com/5kQ8wPfTI4MB8rX7lPbjW00",
     product: {
-      title: "Product Name",
+      title: "GHOE100 Magazine",
       price: "$55.00",
       description: "A short description of the product will go here.",
-      image: null as string | null, // e.g. "/images/shop/product.jpg"
+      image: "/images/shop/product.png" as string | null,
     },
     // Shown on /shop and the post-checkout thank-you page. Placeholders until
     // Cheyenne confirms them; Stripe's review looks for these on the site.
