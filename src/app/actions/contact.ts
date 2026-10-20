@@ -3,9 +3,7 @@
 export type ContactState =
   | { status: "idle" }
   | { status: "sent" }
-  | { status: "error"; message: string }
-  /** No backend configured — the form falls back to the visitor's email app. */
-  | { status: "fallback"; name: string; email: string; message: string };
+  | { status: "error"; message: string };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,7 +30,10 @@ export async function sendContact(_prev: ContactState, form: FormData): Promise<
 
   const url = process.env.CONTACT_WEBHOOK_URL;
   const secret = process.env.CONTACT_WEBHOOK_SECRET;
-  if (!url || !secret) return { status: "fallback", name, email, message };
+  if (!url || !secret) {
+    console.error("Contact form isn't set up: CONTACT_WEBHOOK_URL / CONTACT_WEBHOOK_SECRET missing");
+    return { status: "error", message: "Sorry, the form isn't working right now. Please email me at" };
+  }
 
   try {
     // Apps Script answers a POST with a redirect to the result; fetch follows it.

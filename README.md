@@ -107,7 +107,7 @@ The shop has one product. Checkout works one of two ways; set one in Vercel's en
 
 ## Contact form
 
-The Contact page form and the compact footer form post to a server action (`src/app/actions/contact.ts`). It forwards each message to a Google Apps Script web app, which **adds a row to a Google Sheet and emails the message to Cheyenne**, with Reply-To set to the sender. A hidden honeypot field drops bot submissions. Until `CONTACT_WEBHOOK_URL` is set, the form falls back to opening the visitor's email app.
+The Contact page form and the compact footer form post to a server action (`src/app/actions/contact.ts`). It forwards each message to a Google Apps Script web app, which **adds a row to a Google Sheet and emails the message to Cheyenne**, with Reply-To set to the sender. A hidden honeypot field drops bot submissions. Until `CONTACT_WEBHOOK_URL` is set, the form shows an error with her email address instead.
 
 ### One-time setup (in the thekellyorg Google account)
 

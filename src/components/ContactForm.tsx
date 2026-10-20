@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useId } from "react";
+import { useActionState, useId } from "react";
 import { sendContact, type ContactState } from "@/app/actions/contact";
 import { site } from "@/content/site";
 import { buttonClass } from "./ButtonLink";
@@ -8,7 +8,7 @@ import { buttonClass } from "./ButtonLink";
 /**
  * Contact form. Messages go through the sendContact server action (logged to a
  * Google Sheet and emailed to Cheyenne). If that backend isn't configured, it
- * falls back to opening the visitor's email app with the message filled in.
+ * asks the visitor to email her directly instead.
  *
  * - default: full form for the black Contact page.
  * - compact: shorter version for the white footer.
@@ -18,15 +18,6 @@ export default function ContactForm({ compact = false }: { compact?: boolean }) 
   const [state, action, pending] = useActionState<ContactState, FormData>(sendContact, {
     status: "idle",
   });
-
-  useEffect(() => {
-    if (state.status !== "fallback") return;
-    const subject = `Inquiry from ${state.name}`;
-    const body = `${state.message}\n\n— ${state.name} (${state.email})`;
-    window.location.href = `mailto:${site.email}?subject=${encodeURIComponent(
-      subject,
-    )}&body=${encodeURIComponent(body)}`;
-  }, [state]);
 
   if (state.status === "sent") {
     return (
