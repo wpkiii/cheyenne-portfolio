@@ -7,8 +7,8 @@ import SmartImage from "./SmartImage";
 
 /*
  * Mirrors the reference hero (measured at 1440px wide and scaled in vw):
- * a centered media frame, the first role on the left, the second role on the
- * right running off the edge of the screen, and the full name huge underneath.
+ * a centered media frame with the role on its left, and the full name huge
+ * underneath.
  *
  * Motion (globals.css): on load each line rises out of a mask, the frame wipes
  * open and the orchid blooms; on scroll the frame sinks, the orchid floats up
@@ -44,13 +44,12 @@ function frameRatio(media: Media) {
 export default async function Hero() {
   const media = await getHeroMedia();
   const ratio = frameRatio(media);
-  const [left, right = left] = site.roles;
-  const [rightTop, ...rightRest] = right.split(" ");
+  const [role] = site.roles;
 
   return (
     <section className="overflow-x-clip pb-16 pt-8 md:pb-[6vw] md:pt-[6.5vw]">
       <h1 className="sr-only">
-        {site.name} — {site.roles.join(", ")}
+        {site.name} — {role}
       </h1>
 
       <div className="relative">
@@ -58,7 +57,7 @@ export default async function Hero() {
           aria-hidden
           className={`${label} px-5 text-5xl md:absolute md:left-5 md:top-1/2 md:-translate-y-1/2 md:px-0 md:text-[3.55vw]`}
         >
-          <RiseLine delay={500}>{left}</RiseLine>
+          <RiseLine delay={500}>{role}</RiseLine>
         </p>
 
         {/* Outer wrapper sinks on scroll; inner frame wipes open on load. */}
@@ -84,14 +83,6 @@ export default async function Hero() {
           </div>
         </div>
 
-        {/* Deliberately overflows the right edge, like the reference. */}
-        <p
-          aria-hidden
-          className={`${label} mt-6 whitespace-nowrap pl-[42vw] text-center text-5xl md:absolute md:left-[84.1vw] md:top-1/2 md:mt-0 md:-translate-y-1/2 md:pl-0 md:text-[3.55vw]`}
-        >
-          <RiseLine delay={600}>{rightTop}</RiseLine>
-          <RiseLine delay={700}>{rightRest.join(" ")}</RiseLine>
-        </p>
       </div>
 
       {/* Sized so the full name spans the width with ~40px side margins at desktop;
