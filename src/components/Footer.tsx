@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { site } from "@/content/site";
 import CurrentYear from "./CurrentYear";
-import ContactForm from "./ContactForm";
+import FooterContact from "./FooterContact";
 
 function InstagramIcon() {
   return (
@@ -13,7 +13,7 @@ function InstagramIcon() {
   );
 }
 
-/** White footer: name and links on top, the contact form across the full width. */
+/** White footer: name and links on top, the contact form across the full width (except on /contact). */
 export default function Footer() {
   return (
     <footer className="bg-white px-5 pt-6 text-black md:px-8">
@@ -39,10 +39,7 @@ export default function Footer() {
             </p>
           </div>
         </div>
-        <h2 className="mt-12 text-3xl font-bold tracking-[-0.02em] md:mt-16">Get in Touch</h2>
-        <div className="mt-5">
-          <ContactForm compact />
-        </div>
+        <FooterContact />
       </div>
       <div className="flex flex-col gap-3 py-6 text-xs font-bold md:flex-row md:items-center md:justify-between">
         <p>

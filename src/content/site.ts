@@ -70,6 +70,8 @@ export const site = {
       price: "$32.00",
       description:
         "Editorial magazine celebrating the Centennial of the Greatest Homecoming on Earth at North Carolina Agricultural and Technical State University.",
+      // Shown in italics under the description.
+      note: "Pick up available at Magazine Launch Event at Backtable GSO, 10/29 6PM–9PM",
       image: "/images/shop/product.png" as string | null,
     },
     // Shown on /shop and the post-checkout thank-you page.

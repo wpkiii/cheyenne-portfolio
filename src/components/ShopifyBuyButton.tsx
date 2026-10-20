@@ -131,6 +131,7 @@ export default function ShopifyBuyButton() {
         <h2 className="text-4xl font-bold tracking-[-0.03em] md:text-5xl">{product.title}</h2>
         <p className="mt-4 text-xl font-bold">{product.price}</p>
         <p className="mt-6 max-w-md text-lg font-bold leading-snug">{product.description}</p>
+        {product.note && <p className="mt-4 max-w-md text-lg italic leading-snug">{product.note}</p>}
         {checkoutUrl ? (
           <a href={checkoutUrl} className={`${buttonClass("solid")} mt-10`}>
             Buy Now
